@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -oE 'sc-camel-on-[a-z]+=\\\\\\\\\"\\\\{\\\\{ [a-zA-Z_]+ \\\\}\\\\}\\\\\\\\\"' /Users/blackstar/Downloads/Index.html | sort -u)",
+      "Bash(grep -oE '.{60}\\\\\\\\\"sport\\\\\\\\\".{60}|.{60}sport.{60}' /Users/blackstar/Downloads/Index.html | head -20)",
+      "Bash(grep -oE 'class Component extends DCLogic \\\\{.{0,3000}' /Users/blackstar/Downloads/Index.html)",
+      "Bash(grep -oE 'const SPORTS = \\\\[[^\\\\]]*\\\\]|const SKILLS = \\\\[.{0,400}?\\\\]\\\\;|const SLOTS = \\\\[.{0,600}?\\\\]\\\\;|const MODES = \\\\[.{0,400}?\\\\]\\\\;' /Users/blackstar/Downloads/Index.html)",
+      "Bash(wrangler --version)"
+    ]
+  }
+}

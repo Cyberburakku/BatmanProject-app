@@ -1,0 +1,11 @@
+name = "javet-builder-card"
+pages_build_output_dir = "."
+compatibility_date = "2026-08-12"
+
+# This connects your site to the D1 database (Cloudflare's built-in database).
+# "database_id" gets filled in after you run the "wrangler d1 create" command —
+# see the setup steps for the exact value to paste here.
+[[d1_databases]]
+binding = "DB"
+database_name = "javet_answers"
+database_id = "REPLACE_WITH_DATABASE_ID_FROM_D1_CREATE"

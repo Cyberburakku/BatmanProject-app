@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Builder Card — Javet</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 50% -10%, #1a2130 0%, #0a0c12 55%, #060709 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .card {
+    position: relative;
+    width: 700px;
+    max-width: 100%;
+    min-height: 940px;
+    padding: 56px 52px 40px;
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(63, 215, 196, 0.10), transparent 45%),
+      radial-gradient(circle at 100% 20%, rgba(139, 92, 246, 0.12), transparent 45%),
+      linear-gradient(160deg, #14181f 0%, #10131a 55%, #0c0e13 100%);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.05),
+      0 0 60px rgba(63, 215, 196, 0.08),
+      0 30px 80px rgba(0,0,0,0.6);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    padding: 1px;
+    background: linear-gradient(160deg, rgba(63,215,196,0.55), rgba(255,255,255,0.05) 30%, rgba(139,92,246,0.35) 70%, rgba(255,255,255,0.04));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0.6), transparent 70%);
+    pointer-events: none;
+  }
+
+  .serial {
+    position: absolute;
+    top: 24px;
+    right: 30px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.28);
+    font-family: 'Space Grotesk', sans-serif;
+    z-index: 2;
+  }
+
+  .top {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .badge {
+    width: 76px;
+    height: 76px;
+    margin-bottom: 22px;
+    filter: drop-shadow(0 0 14px rgba(63, 215, 196, 0.55));
+  }
+
+  .kicker {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    color: #7fe9d8;
+    text-shadow: 0 0 18px rgba(63, 215, 196, 0.6);
+    margin-bottom: 6px;
+  }
+
+  .kicker-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.32);
+    letter-spacing: 0.18em;
+    margin-bottom: 30px;
+  }
+
+  .name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 58px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    background: linear-gradient(135deg, #ffffff 20%, #bfe9e0 60%, #9fd8ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 40px rgba(63, 215, 196, 0.25);
+    line-height: 1.05;
+  }
+
+  .role {
+    margin-top: 10px;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.4);
+    font-weight: 500;
+  }
+
+  .role span { color: #9fd9c8; }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    margin: 36px 0 32px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);
+  }
+
+  .section {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 32px;
+  }
+
+  .section-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    color: rgba(255,255,255,0.42);
+    margin-bottom: 16px;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .tag {
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: #d9fff5;
+    background: linear-gradient(135deg, rgba(63,215,196,0.14), rgba(139,92,246,0.10));
+    border: 1px solid rgba(127, 233, 216, 0.28);
+    box-shadow: 0 0 16px rgba(63,215,196,0.08);
+  }
+
+  .offline-line {
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.72);
+    font-weight: 400;
+  }
+
+  .offline-line::before {
+    content: "— ";
+    color: rgba(255,255,255,0.3);
+  }
+
+  .rules {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .rules li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.78);
+  }
+
+  .rules li .dot {
+    flex-shrink: 0;
+    margin-top: 6px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #7fe9d8;
+    box-shadow: 0 0 10px rgba(127,233,216,0.9);
+  }
+
+  .spacer { flex: 1; }
+
+  .footer {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .date {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.32);
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* --- Form section: styled per DESIGN.md (Electric Blue / Fire Orange / Gold / Deep Navy) --- */
+  .form-card {
+    position: relative;
+    z-index: 2;
+    background: #0A0E1A;
+    border: 1px solid rgba(0, 163, 255, 0.25);
+    border-radius: 16px;
+    padding: 28px;
+  }
+
+  .form-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.04em;
+    color: #FFFFFF;
+    margin-bottom: 4px;
+  }
+
+  .form-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 20px;
+  }
+
+  .field { margin-bottom: 16px; }
+
+  .field label {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #FF6B00;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .field input,
+  .field textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    resize: vertical;
+  }
+
+  .field input:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: #00A3FF;
+    box-shadow: 0 0 0 3px rgba(0, 163, 255, 0.2);
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background: #FFD700;
+    color: #0A0E1A;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+  }
+
+  .submit-btn:hover { background: #ffdf33; }
+
+  .thanks-banner {
+    display: none;
+    background: rgba(0, 163, 255, 0.12);
+    border: 1px solid rgba(0, 163, 255, 0.4);
+    color: #9fd9ff;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+
+  .thanks-banner.show { display: block; }
+</style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="serial">NO. 001</div>
+
+    <div class="top">
+      <svg class="badge" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="badgeGrad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#7fe9d8"/>
+            <stop offset="100%" stop-color="#8b5cf6"/>
+          </linearGradient>
+        </defs>
+        <polygon points="50,4 91,27 91,73 50,96 9,73 9,27" stroke="url(#badgeGrad)" stroke-width="2.5" fill="rgba(255,255,255,0.02)"/>
+        <path d="M50 30 L64 50 L50 70 L36 50 Z" fill="url(#badgeGrad)" opacity="0.85"/>
+        <circle cx="50" cy="50" r="5" fill="#0c0e13"/>
+      </svg>
+
+      <div class="kicker">THE AI BUILDER'S LAB</div>
+      <div class="kicker-sub">MEMBERSHIP CARD</div>
+
+      <div class="name">JAVET</div>
+      <div class="role">APPRENTICE&nbsp;BUILDER · <span>LEVEL 01</span></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-label">HERE TO BUILD</div>
+      <div class="tags">
+        <div class="tag">Websites</div>
+        <div class="tag">Small Apps</div>
+        <div class="tag">Automations for Local Businesses</div>
+        <div class="tag">Posters</div>
+        <div class="tag">+ Anything Else Possible</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">OFF THE CLOCK</div>
+      <div class="offline-line">Urban life, road biking, and being outdoors.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">HOW I WORK WITH CLAUDE</div>
+      <ul class="rules">
+        <li><span class="dot"></span>Plain English, always — no unexplained jargon.</li>
+        <li><span class="dot"></span>Any technical term gets a plain-language explanation in brackets.</li>
+        <li><span class="dot"></span>Tell me what you're about to do before doing it.</li>
+        <li><span class="dot"></span>Never delete or overwrite anything without asking first.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-label">SAY HELLO</div>
+      <div class="form-card">
+        <div class="form-title">Get in touch</div>
+        <div class="form-subtitle">Sends straight to Javet.</div>
+        <div class="thanks-banner" id="thanksBanner">Thanks — your message was saved!</div>
+        <form method="POST" action="/api/submit">
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="4" required></textarea>
+          </div>
+          <button type="submit" class="submit-btn">Send</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="footer">
+      <div class="date">ISSUED · AUGUST 11, 2026</div>
+    </div>
+  </div>
+
+  <script>
+    if (new URLSearchParams(location.search).get('submitted') === '1') {
+      document.getElementById('thanksBanner').classList.add('show');
+    }
+  </script>
+
+</body>
+</html>
