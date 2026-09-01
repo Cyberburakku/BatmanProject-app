@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html, body, #root {
+  min-height: 100%;
+}
+
+body {
+  @apply bg-[#f4f6fb] text-navy-900 antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+.dark body {
+  @apply bg-navy-900 text-white;
+}
+
+/* Bebas Neue has no lowercase; the tracking keeps headings from crowding. */
+.font-display {
+  letter-spacing: 0.02em;
+}
+
+/* Stops iOS Safari from zooming when a field is focused. */
+input, textarea, select, button {
+  font-size: max(16px, 1em);
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-black/5 bg-white shadow-sm;
+  }
+  .dark .card {
+    @apply border-white/10 bg-navy-800 shadow-none;
+  }
+  .field {
+    @apply w-full rounded-xl border border-black/10 bg-white px-3 py-2.5 text-navy-900
+           outline-none transition placeholder:text-navy-900/35
+           focus:border-blue focus:ring-2 focus:ring-blue/30;
+  }
+  .dark .field {
+    @apply border-white/15 bg-navy-700 text-white placeholder:text-white/35;
+  }
+  .btn {
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-xl px-4 py-2.5
+           font-semibold transition active:scale-[0.98] disabled:opacity-40 disabled:active:scale-100;
+  }
+  .btn-primary {
+    @apply btn bg-blue text-white hover:bg-blue-600;
+  }
+  .btn-gold {
+    @apply btn bg-gold text-navy-900 hover:bg-gold-600;
+  }
+  .btn-ghost {
+    @apply btn bg-black/5 text-navy-900 hover:bg-black/10;
+  }
+  .dark .btn-ghost {
+    @apply bg-white/10 text-white hover:bg-white/20;
+  }
+  .tag {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
