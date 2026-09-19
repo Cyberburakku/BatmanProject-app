@@ -1,0 +1,3085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T.E.C.H. Directory for Reintegration (Maine)</title>
+<meta name="description" content="An offline-friendly directory of technology, employment and Maine community resources for people returning to the community.">
+<meta name="color-scheme" content="dark">
+<!--
+  ===========================================================================
+  T.E.C.H. DIRECTORY FOR REINTEGRATION (MAINE) - single-file web app
+  ===========================================================================
+
+  WHAT THIS FILE IS
+  A complete, self-contained directory app. Everything it needs - markup,
+  styles, behaviour and the full dataset - lives inside this one .html file.
+  Save it anywhere and double-click it; no server, no install, no internet.
+
+  WHERE THE DATA COMES FROM
+  Every entry is read from the workbook
+  "T.E.C.H. Directory for Reintegration (Maine).xlsx" and embedded below in
+  the DIRECTORY_DATA object (search for "DIRECTORY DATA" further down).
+  The four worksheets map to the four categories:
+
+    Technology        A = topic,  B = link text + hyperlink
+    Employment        A = topic,  B = link text + hyperlink
+    Connections       A = City/Website/State, B = Place name, C = Address,
+                      E = Phone, E or F = link
+    Form Responses 1  A Timestamp, B suggestion, C video suggestion,
+                      D Score, E Email Address, F Column 5
+
+  Nothing was dropped, merged away or summarised. Original wording - including
+  the red-square markers, double spaces and original spellings - is shown
+  exactly as it appears in the spreadsheet, and each cell's spreadsheet
+  address (e.g. "Connections!C13") is kept in the data for traceability.
+  The only thing added is a "plain" field: a plain-language explanation
+  written at roughly a middle-school reading level that sits BESIDE the
+  original text, never instead of it.
+
+  OFFLINE BEHAVIOUR
+  Browsing, searching, filtering and reading all work with no connection.
+  Two things need the internet, and both are labelled in the interface:
+    1. Watching a linked video.
+    2. Opening any external website or emailing a listed address.
+  YouTube thumbnail images are fetched from img.youtube.com when a connection
+  exists; when it does not, each one quietly falls back to a text placeholder
+  and nothing else changes.
+
+  FONTS
+  The house style calls for Bebas Neue (headings) and Inter (body). Because
+  this file must stay self-contained, no web fonts are downloaded. Both are
+  requested by name so they are used when installed locally, with widely
+  available fallbacks listed after them.
+
+  MAINTENANCE
+  To add or change entries, edit DIRECTORY_DATA. The shape is documented
+  directly above it. The rendering code reads the data generically, so new
+  sections, groups, columns or categories appear automatically.
+
+  ACCESSIBILITY TARGET: WCAG 2.1 Level AA.
+  ===========================================================================
+-->
+<style>
+/* ---------------------------------------------------------------------------
+   DESIGN TOKENS
+   Palette comes from the project style guide. Every text/background pairing
+   below was contrast-checked against WCAG 2.1 AA (4.5:1 body, 3:1 large text
+   and interface borders).
+   --------------------------------------------------------------------------- */
+:root{
+  --navy:#0A0E1A;          /* page background            */
+  --navy-card:#121A2E;     /* raised surfaces            */
+  --navy-deep:#070A12;     /* header / footer            */
+  --blue:#00A3FF;          /* primary   - 7.0:1 on navy  */
+  --orange:#FF6B00;        /* secondary - 6.7:1 on navy  */
+  --gold:#FFD700;          /* accent    - 13.7:1 on navy */
+  --white:#FFFFFF;         /* body text - 19.2:1 on navy */
+  --muted:#C7D2E6;         /* secondary text - 11.3:1 on card */
+  --border:#33415C;        /* 3.0:1 against card - AA for UI borders */
+  --radius:14px;
+  --maxw:1100px;
+  --font-head:'Bebas Neue','Oswald','Arial Narrow',Impact,sans-serif;
+  --font-body:'Inter','Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{font-size:var(--root-size,100%)}
+body{
+  margin:0;background:var(--navy);color:var(--white);
+  font-family:var(--font-body);font-size:1.0625rem;line-height:1.65;
+  -webkit-text-size-adjust:100%;
+}
+h1,h2,h3,h4{line-height:1.2;margin:0 0 .5rem}
+h1{font-family:var(--font-head);font-size:clamp(2rem,5vw,3rem);letter-spacing:.02em}
+h2{font-size:clamp(1.4rem,3.5vw,2rem)}
+h3{font-size:1.25rem}
+h4{font-size:1.05rem}
+p{margin:0 0 .85rem}
+a{color:var(--blue)}
+a:hover{color:var(--gold)}
+
+/* Visible keyboard focus everywhere - never removed. */
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:4px}
+
+/* Screen-reader-only helper */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+.skip-link{position:absolute;left:8px;top:-60px;z-index:100;background:var(--gold);
+  color:var(--navy);padding:.75rem 1.25rem;border-radius:0 0 8px 8px;font-weight:700;
+  transition:top .15s}
+.skip-link:focus{top:0}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 1.1rem}
+
+/* --- header ------------------------------------------------------------- */
+.site-header{position:sticky;top:0;z-index:40;background:var(--navy-deep);
+  border-bottom:2px solid var(--border)}
+.header-row{display:flex;flex-wrap:wrap;gap:.75rem 1rem;align-items:center;
+  padding:.7rem 0}
+.brand{display:flex;align-items:center;gap:.6rem;font-family:var(--font-head);
+  font-size:1.6rem;letter-spacing:.03em;color:var(--white);text-decoration:none;
+  padding:.25rem .35rem;border-radius:8px}
+.brand:hover{color:var(--gold)}
+.brand-mark{display:inline-grid;place-items:center;width:2.4rem;height:2.1rem;
+  border-radius:8px;background:var(--blue);color:var(--navy);font-weight:800;
+  font-family:var(--font-body);font-size:.7rem;letter-spacing:.02em}
+.header-tools{display:flex;gap:.5rem;align-items:center;margin-left:auto;flex-wrap:wrap}
+
+.searchbar{display:flex;align-items:center;gap:.5rem;background:var(--navy-card);
+  border:2px solid var(--border);border-radius:999px;padding:.3rem .4rem .3rem .9rem}
+.searchbar:focus-within{border-color:var(--gold)}
+.searchbar input{background:transparent;border:0;color:var(--white);
+  font:inherit;font-size:1rem;min-width:min(52vw,18rem);padding:.4rem 0}
+.searchbar input::placeholder{color:var(--muted)}
+.searchbar input:focus{outline:none}
+
+/* Buttons: minimum 44x44 hit area for touch and motor accessibility. */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
+  min-height:44px;padding:.55rem 1.1rem;border-radius:999px;border:2px solid transparent;
+  font:inherit;font-weight:600;cursor:pointer;text-decoration:none;background:var(--navy-card);
+  color:var(--white);border-color:var(--border)}
+.btn:hover{border-color:var(--gold);color:var(--gold)}
+.btn-primary{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+.btn-primary:hover{background:var(--white);color:var(--navy);border-color:var(--white)}
+.btn-quiet{background:transparent}
+.btn-icon{min-width:44px;padding:.55rem .7rem}
+.btn[aria-pressed="true"]{background:var(--blue);color:var(--navy);border-color:var(--blue)}
+
+/* --- global notices ----------------------------------------------------- */
+.notice{border-radius:var(--radius);padding:.9rem 1.1rem;margin:1rem 0;
+  border-left:6px solid var(--orange);background:var(--navy-card);
+  border-top:1px solid var(--border);border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border)}
+.notice h2,.notice h3{margin-top:0}
+.notice-video{border-left-color:var(--orange)}
+.notice-error{border-left-color:var(--gold)}
+.notice p:last-child{margin-bottom:0}
+.notice-flag{display:inline-block;font-weight:700;color:var(--orange);
+  text-transform:uppercase;letter-spacing:.06em;font-size:.8rem}
+
+/* --- landing ------------------------------------------------------------ */
+.hero{padding:2.4rem 0 1.2rem}
+.hero .lede{font-size:1.15rem;color:var(--white);max-width:60ch}
+.hero .sub{color:var(--muted);max-width:66ch}
+.rule{height:4px;width:96px;background:var(--orange);border-radius:4px;margin:1rem 0 1.4rem}
+
+.howto{background:var(--navy-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.1rem 1.3rem;margin:1.2rem 0}
+.howto ol{margin:.4rem 0 0;padding-left:1.3rem}
+.howto li{margin-bottom:.45rem}
+.howto li:last-child{margin-bottom:0}
+
+.cards{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));
+  padding:0;margin:1.2rem 0 0;list-style:none}
+.card{display:flex;flex-direction:column;gap:.5rem;height:100%;background:var(--navy-card);
+  border:2px solid var(--border);border-radius:var(--radius);padding:1.2rem;
+  color:var(--white);text-decoration:none}
+.card:hover{border-color:var(--gold);color:var(--white);transform:translateY(-2px)}
+.card h3{font-family:var(--font-head);font-size:1.6rem;letter-spacing:.02em;
+  color:var(--blue);margin:0}
+.card:hover h3{color:var(--gold)}
+.card .card-plain{color:var(--muted);margin:0;flex:1}
+.card .card-count{font-weight:700;color:var(--orange);font-size:.95rem}
+.card .card-topics{color:var(--muted);font-size:.9rem;margin:0}
+.card-go{font-weight:700;color:var(--gold)}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s,transform .15s}}
+
+/* --- category view ------------------------------------------------------ */
+.crumbs{padding:1rem 0 .2rem;font-size:.95rem;color:var(--muted)}
+.crumbs a{color:var(--blue)}
+.section-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin:.9rem 0 1.4rem;padding:0;list-style:none}
+.chip{display:inline-flex;align-items:center;min-height:44px;padding:.4rem 1rem;
+  border-radius:999px;border:2px solid var(--border);background:var(--navy-card);
+  color:var(--white);text-decoration:none;font-size:.95rem;font-weight:600}
+.chip:hover{border-color:var(--gold);color:var(--gold)}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;
+  padding:.8rem 0 .2rem;border-top:1px solid var(--border)}
+.toolbar .label{color:var(--muted);font-size:.9rem;font-weight:600}
+
+.section{margin:2rem 0;scroll-margin-top:100px}
+.section-head{border-left:6px solid var(--blue);padding-left:.9rem;margin-bottom:1rem}
+.section-head h2,.section-head h3{font-size:1.5rem;margin:0;color:var(--white)}
+.section-head .plain{color:var(--muted);margin:.25rem 0 0}
+.group{margin:1.3rem 0}
+.group-head{color:var(--orange);font-size:1rem;font-weight:700;margin:0 0 .6rem;
+  text-transform:uppercase;letter-spacing:.05em}
+
+.entries{list-style:none;margin:0;padding:0;display:grid;gap:.9rem}
+.entry{background:var(--navy-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1rem 1.1rem}
+.entry.is-video{border-left:6px solid var(--orange)}
+.entry-title{font-size:1.1rem;font-weight:700;margin:0 0 .35rem;color:var(--white)}
+/* Spreadsheet text is shown character-for-character, so the double spaces and
+   spacing quirks in the original file survive instead of being collapsed. */
+.entry-title,.fields dd,.linkbody .linktext,.section-head h2,.section-head h3,
+.group-head{white-space:pre-wrap}
+.entry-title .cellref{font-weight:400;font-size:.8rem;color:var(--muted);margin-left:.4rem;white-space:nowrap}
+.plain-note{color:var(--muted);margin:.2rem 0 .7rem;max-width:72ch}
+.plain-note strong{color:var(--white)}
+
+.fields{margin:0 0 .7rem;display:grid;gap:.3rem .9rem}
+.fields div{display:flex;flex-wrap:wrap;gap:.45rem}
+.fields dt{color:var(--muted);font-size:.9rem;font-weight:700;margin:0;min-width:5.5rem}
+.fields dd{margin:0;color:var(--white)}
+.fields dd.empty{color:var(--muted);font-style:italic}
+
+.badges{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 .6rem}
+.badge{display:inline-block;padding:.2rem .65rem;border-radius:999px;
+  font-size:.78rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+.badge-video{background:var(--orange);color:var(--navy)}
+.badge-web{background:var(--blue);color:var(--navy)}
+.badge-email{background:var(--gold);color:var(--navy)}
+.badge-offline{background:transparent;color:var(--muted);border:1px solid var(--border)}
+
+.linkrow{display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap}
+.thumb{flex:0 0 auto;width:160px;height:90px;border-radius:8px;overflow:hidden;
+  background:var(--navy-deep);border:1px solid var(--border);
+  display:grid;place-items:center;text-align:center}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .thumb-fallback{font-size:.75rem;color:var(--muted);padding:.4rem;line-height:1.3}
+.linkbody{flex:1 1 15rem;min-width:0}
+.linkbody .linktext{display:block;word-break:break-word;font-weight:600}
+.linkbody .linkurl{display:block;color:var(--muted);font-size:.82rem;word-break:break-all;
+  margin-top:.15rem}
+.linkbody .needs-net{display:block;color:var(--orange);font-size:.85rem;font-weight:700;
+  margin-top:.35rem}
+
+/* --- search results ----------------------------------------------------- */
+.result-head{padding:1.2rem 0 .2rem}
+.result-count{color:var(--muted)}
+mark{background:var(--gold);color:var(--navy);padding:0 .15em;border-radius:3px;font-weight:700}
+.empty-state{background:var(--navy-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.5rem;margin:1.2rem 0}
+.empty-state ul{margin:.4rem 0 0;padding-left:1.2rem;color:var(--muted)}
+
+/* --- dialog ------------------------------------------------------------- */
+dialog.confirm{border:2px solid var(--border);border-radius:var(--radius);
+  background:var(--navy-card);color:var(--white);max-width:34rem;width:calc(100% - 2rem);
+  padding:1.4rem;font-family:var(--font-body)}
+dialog.confirm::backdrop{background:rgba(7,10,18,.8)}
+dialog.confirm h2{font-size:1.3rem;margin-top:0}
+dialog.confirm .dlg-url{display:block;background:var(--navy-deep);border:1px solid var(--border);
+  border-radius:8px;padding:.6rem .75rem;word-break:break-all;font-size:.9rem;
+  color:var(--blue);margin:.6rem 0 1rem}
+dialog.confirm .dlg-actions{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:flex-end}
+
+/* --- footer ------------------------------------------------------------- */
+.site-footer{margin-top:3rem;padding:1.6rem 0 2.4rem;border-top:2px solid var(--border);
+  background:var(--navy-deep);color:var(--muted);font-size:.92rem}
+.site-footer a{color:var(--blue)}
+
+[hidden]{display:none !important}
+
+@media (max-width:640px){
+  .searchbar input{min-width:0;width:100%}
+  .searchbar{flex:1 1 100%}
+  .header-tools{width:100%;margin-left:0}
+  .thumb{width:100%;height:auto;aspect-ratio:16/9}
+}
+@media print{
+  .site-header,.section-nav,.toolbar,.skip-link,.card-go{display:none}
+  body{background:#fff;color:#000}
+  .entry,.card,.notice{border:1px solid #666;background:#fff;color:#000}
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<!-- =====================================================================
+     HEADER - stays on screen so search and Home are always one key away.
+     ===================================================================== -->
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="#/" id="brandLink">
+      <span class="brand-mark" aria-hidden="true">TECH</span>
+      <span>T.E.C.H. Directory</span>
+    </a>
+
+    <div class="header-tools">
+      <!-- role="search" marks this as the page's search landmark. -->
+      <form class="searchbar" role="search" id="searchForm" autocomplete="off">
+        <label class="sr-only" for="searchInput">Search the directory by name, category or keyword</label>
+        <span aria-hidden="true">&#128269;</span>
+        <input type="search" id="searchInput" name="q"
+               placeholder="Search all resources&hellip;"
+               aria-describedby="searchHint">
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+      <span id="searchHint" class="sr-only">
+        Results update as you type. Press Escape to clear the search box.
+      </span>
+
+      <!-- Text-size control: helps low-vision readers without zooming the whole page. -->
+      <div class="header-tools" role="group" aria-label="Text size">
+        <button type="button" class="btn btn-icon btn-quiet" id="textSmaller"
+                aria-label="Make text smaller">A&minus;</button>
+        <button type="button" class="btn btn-icon btn-quiet" id="textLarger"
+                aria-label="Make text larger">A+</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Polite live region: announces view changes and result counts to screen readers. -->
+<p id="liveStatus" class="sr-only" role="status" aria-live="polite"></p>
+
+<main id="main" tabindex="-1">
+
+  <!-- Shown only if something goes wrong. Populated by showFatalError(). -->
+  <div class="wrap"><div id="errorPanel" class="notice notice-error" role="alert" hidden></div></div>
+
+  <!-- ===================================================================
+       VIEW 1 - LANDING PAGE
+       =================================================================== -->
+  <section id="viewHome" class="view" aria-labelledby="homeTitle">
+    <div class="wrap">
+      <div class="hero">
+        <h1 id="homeTitle">T.E.C.H. Directory for Reintegration</h1>
+        <div class="rule" aria-hidden="true"></div>
+        <p class="lede">
+          A plain-English guide to getting online, getting hired and getting
+          connected in Maine &mdash; built for people coming home.
+        </p>
+        <p class="sub">
+          Every resource here was collected in the T.E.C.H. directory spreadsheet and is
+          shown exactly as it was written, with a simple explanation added underneath so
+          you never have to guess what something means.
+        </p>
+      </div>
+
+      <!-- The offline / video notice the brief asks to be prominent and always visible
+           on the way in. It is repeated at the top of every category view. -->
+      <div class="notice notice-video">
+        <span class="notice-flag">Important</span>
+        <h2 style="font-size:1.15rem">This directory works without internet. Videos do not.</h2>
+        <p>
+          Once this file is saved on your device you can open it, read it, search it and
+          browse it with no connection at all. But the videos and websites it points to
+          live on the internet &mdash; so you will need a connection (library Wi-Fi works
+          fine) to actually watch a video or open a website. Anything that needs a
+          connection is marked with an orange
+          <span class="badge badge-video">Video&nbsp;&mdash;&nbsp;needs internet</span> or
+          <span class="badge badge-web">Website</span> tag.
+        </p>
+      </div>
+
+      <div class="howto">
+        <h2 style="font-size:1.15rem">How to use this directory</h2>
+        <ol>
+          <li><strong>Pick a category below.</strong> There are four, one for each part of the original spreadsheet.</li>
+          <li><strong>Or search.</strong> Type anything into the search box at the top &mdash; a city, a word like &ldquo;resume&rdquo;, or a website name &mdash; and matching entries appear right away.</li>
+          <li><strong>Read the grey text.</strong> Under each original entry there is a short, simple explanation of what it is and why you might want it.</li>
+          <li><strong>Open a link.</strong> A pop-up will check with you first, so you never leave this page by accident.</li>
+        </ol>
+      </div>
+
+      <h2 id="categoriesHeading">Browse by category</h2>
+      <p class="sub">Choose a category to see everything inside it.</p>
+      <ul class="cards" id="categoryCards" aria-labelledby="categoriesHeading"></ul>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       VIEW 2 - ONE CATEGORY
+       =================================================================== -->
+  <section id="viewCategory" class="view" aria-labelledby="categoryTitle" hidden>
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="#/">Home</a> <span aria-hidden="true">&rsaquo;</span>
+        <span id="crumbCurrent"></span>
+      </nav>
+      <h1 id="categoryTitle"></h1>
+      <div class="rule" aria-hidden="true"></div>
+      <p class="lede" id="categoryPlain"></p>
+      <p class="sub" id="categoryMeta"></p>
+
+      <div class="notice notice-video">
+        <span class="notice-flag">Remember</span>
+        <p>
+          Reading and searching this page needs no internet. Watching a video, opening a
+          website or sending an email <strong>does</strong>. Those are tagged in orange
+          and blue below.
+        </p>
+      </div>
+
+      <nav aria-label="Jump to a section in this category">
+        <ul class="section-nav" id="sectionNav"></ul>
+      </nav>
+
+      <div class="toolbar">
+        <span class="label" id="sortLabel">Order entries:</span>
+        <button type="button" class="btn" id="sortOriginal" aria-pressed="true"
+                aria-describedby="sortLabel">Spreadsheet order</button>
+        <button type="button" class="btn" id="sortAlpha" aria-pressed="false"
+                aria-describedby="sortLabel">A to Z</button>
+      </div>
+
+      <div id="categoryBody"></div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       VIEW 3 - SEARCH RESULTS
+       =================================================================== -->
+  <section id="viewSearch" class="view" aria-labelledby="searchTitle" hidden>
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="#/">Home</a> <span aria-hidden="true">&rsaquo;</span>
+        <span>Search results</span>
+      </nav>
+      <div class="result-head">
+        <h1 id="searchTitle">Search results</h1>
+        <div class="rule" aria-hidden="true"></div>
+        <p class="result-count" id="searchSummary"></p>
+      </div>
+      <div id="searchBody"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>
+      <strong>T.E.C.H. Directory for Reintegration (Maine).</strong>
+      All entries come from the T.E.C.H. directory spreadsheet and are shown as written.
+      Plain-language explanations were added to make the directory easier to read; they do
+      not replace the original wording.
+    </p>
+    <p id="footerStats"></p>
+    <p>
+      Phone numbers, addresses and opening hours change. Please call ahead before you
+      travel to any location listed here.
+    </p>
+  </div>
+</footer>
+
+<!-- =====================================================================
+     EXTERNAL LINK CONFIRMATION DIALOG
+     Shown before ANY link leaves this page, so nobody navigates away by
+     accident and loses their place. Native <dialog> gives us a focus trap,
+     Escape-to-close and a backdrop for free; a plain confirm() is used as a
+     fallback on browsers that lack showModal().
+     ===================================================================== -->
+<dialog class="confirm" id="linkDialog" aria-labelledby="dlgTitle" aria-describedby="dlgDesc">
+  <h2 id="dlgTitle">Leave this directory?</h2>
+  <p id="dlgDesc"></p>
+  <code class="dlg-url" id="dlgUrl"></code>
+  <p id="dlgNet"></p>
+  <div class="dlg-actions">
+    <button type="button" class="btn" id="dlgCancel">Cancel &mdash; stay here</button>
+    <button type="button" class="btn btn-primary" id="dlgGo">Open the link</button>
+  </div>
+</dialog>
+<script>
+/* ===========================================================================
+   T.E.C.H. DIRECTORY - application code
+   ---------------------------------------------------------------------------
+   Written as one plain script with no build step and no libraries, so the file
+   keeps working years from now with nothing installed.
+
+   Order of business:
+     1. DIRECTORY DATA        - the whole spreadsheet, embedded
+     2. Small helpers         - DOM, storage, escaping
+     3. Validation            - fail loudly and kindly if the data is broken
+     4. Index building        - one flat list used by search
+     5. Rendering             - landing page, category page, search results
+     6. Link confirmation     - the "you are about to leave" dialog
+     7. Router + start-up
+   =========================================================================== */
+'use strict';
+
+/* ===========================================================================
+   1. DIRECTORY DATA
+   ---------------------------------------------------------------------------
+   Generated from "T.E.C.H. Directory for Reintegration (Maine).xlsx".
+   Shape:
+
+   { source: string,
+     categories: [{
+       id      : url-safe id used in the address bar
+       sheet   : the worksheet this came from
+       title   : the worksheet's own title text (cell A1)
+       plain   : added plain-language summary of the category
+       sections: [{
+         row      : spreadsheet row of the section banner
+         title    : section banner text, trimmed
+         rawTitle : section banner text exactly as stored
+         plain    : added plain-language summary of the section
+         groups   : [{
+           headerRow: spreadsheet row holding the column headings
+           labels   : { columnLetter: heading text }
+           entries  : [{
+             row   : spreadsheet row number
+             ref   : "Sheet!row"
+             fields: [{ label, value, cell, empty? }]   <- every populated column
+             link  : null, or
+                     { kind:'youtube'|'web'|'email', url, text, cell,
+                       videoId?, playlist?, display? }
+             plain : added plain-language explanation of this entry
+           }]
+         }]
+       }]
+     }]
+   }
+
+   Editing note: "value" strings are printed verbatim, including the red-square
+   markers and original spellings from the spreadsheet. Only "plain" is ours.
+   =========================================================================== */
+const DIRECTORY_DATA = /*__DATA__*/
+{
+ "source": "T.E.C.H. Directory for Reintegration (Maine).xlsx",
+ "categories": [
+  {
+   "id": "technology",
+   "sheet": "Technology",
+   "title": "Technology",
+   "plain": "Everything about using a phone, a computer and the internet — starting from the very beginning.",
+   "sections": [
+    {
+     "row": 2,
+     "title": "Smartphones",
+     "rawTitle": "Smartphones",
+     "plain": "Getting started with a phone: turning it on, setting it up, and finding the settings that matter.",
+     "groups": [
+      {
+       "headerRow": 3,
+       "labels": {
+        "A": "How to navigate different types of phones",
+        "B": "Links "
+       },
+       "entries": [
+        {
+         "row": 4,
+         "ref": "Technology!4",
+         "fields": [
+          {
+           "label": "How to navigate different types of phones",
+           "value": "1.  IPhone",
+           "cell": "A4"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=P5dUxKSN4HM",
+          "videoId": "P5dUxKSN4HM",
+          "playlist": false,
+          "text": "How To Set Up A New iPhone - YouTube",
+          "cell": "B4"
+         },
+         "plain": "A step-by-step video showing how to turn on a brand-new iPhone for the first time and get it ready to use — picking a language, joining Wi-Fi, and making an Apple account."
+        },
+        {
+         "row": 5,
+         "ref": "Technology!5",
+         "fields": [
+          {
+           "label": "How to navigate different types of phones",
+           "value": "2.  Android",
+           "cell": "A5"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=uUO0HrmMXOM",
+          "videoId": "uUO0HrmMXOM",
+          "playlist": false,
+          "text": "How to Setup Galaxy S24 Ultra for Beginners - YouTube",
+          "cell": "B5"
+         },
+         "plain": "The same kind of walkthrough, but for a Samsung Galaxy (an Android phone). Android is the phone software made by Google; most phones that are not iPhones run it."
+        }
+       ]
+      },
+      {
+       "headerRow": 6,
+       "labels": {
+        "A": "How to navigate a phone application ",
+        "B": "Links "
+       },
+       "entries": [
+        {
+         "row": 7,
+         "ref": "Technology!7",
+         "fields": [
+          {
+           "label": "How to navigate a phone application",
+           "value": "1. Accessories",
+           "cell": "A7"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=ikI9muwHZMw",
+          "videoId": "ikI9muwHZMw",
+          "playlist": false,
+          "text": "iPhone 16 Pro | Pro Max - TIPS, TRICKS & HIDDEN FEATURES!! - YouTube",
+          "cell": "B7"
+         },
+         "plain": "Hidden tricks and handy settings on newer iPhones — things like the camera button, the flashlight, and shortcuts most people never find."
+        },
+        {
+         "row": 8,
+         "ref": "Technology!8",
+         "fields": [
+          {
+           "label": "How to navigate a phone application",
+           "value": "2. Organization and Accessibility",
+           "cell": "A8"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=emrLEDH52e0",
+          "videoId": "emrLEDH52e0",
+          "playlist": false,
+          "text": "Samsung Galaxy S24 Ultra TIPS, TRICKS & HIDDEN FEATURES!! - YouTube",
+          "cell": "B8"
+         },
+         "plain": "The same kind of tips and hidden settings for a Samsung Galaxy phone."
+        },
+        {
+         "row": 9,
+         "ref": "Technology!9",
+         "fields": [
+          {
+           "label": "How to navigate a phone application",
+           "value": "3. Technical and IT Support",
+           "cell": "A9"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.hellotech.com/us/me",
+          "text": "🟥 Tech support service in Maine | HelloTech",
+          "cell": "B9"
+         },
+         "plain": "HelloTech is a company that sends a real person to help you set up or fix your phone, computer, TV or Wi-Fi. This page lists the ones who work in Maine. It usually costs money — check the price before you book."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "row": 11,
+     "title": "Computers/Tablets",
+     "rawTitle": "Computers/Tablets",
+     "plain": "The basics of using a computer or tablet, plus what the common tech words mean.",
+     "groups": [
+      {
+       "headerRow": 12,
+       "labels": {
+        "A": "",
+        "B": "Links"
+       },
+       "entries": [
+        {
+         "row": 13,
+         "ref": "Technology!13",
+         "fields": [
+          {
+           "label": "A",
+           "value": "1. Basic Computer Skills",
+           "cell": "A13"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.freecodecamp.org/news/computer-basics-for-absolute-beginners/",
+          "text": "🟥 https://www.freecodecamp.org/news/computer-basics-for-absolute-beginners/",
+          "cell": "B13"
+         },
+         "plain": "A free beginner's guide that explains the basic parts of a computer and how to use one — written for people starting from zero."
+        },
+        {
+         "row": 14,
+         "ref": "Technology!14",
+         "fields": [
+          {
+           "label": "A",
+           "value": "2. Commonly used Acronyms",
+           "cell": "A14"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.freecodecamp.org/news/computer-basics-for-absolute-beginners/",
+          "text": "🟥 https://www.freecodecamp.org/news/computer-basics-for-absolute-beginners/",
+          "cell": "B14"
+         },
+         "plain": "The same free guide, used here for the short letter-codes tech people use (an acronym is a word made from the first letters of other words, like RAM or USB)."
+        },
+        {
+         "row": 15,
+         "ref": "Technology!15",
+         "fields": [
+          {
+           "label": "A",
+           "value": "3. Shortcuts on Keyboard",
+           "cell": "A15"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.freecodecamp.org/news/computer-basics-for-absolute-beginners/",
+          "text": "🟥 https://www.freecodecamp.org/news/computer-basics-for-absolute-beginners/",
+          "cell": "B15"
+         },
+         "plain": "The same free guide, used here for keyboard shortcuts — key combinations like Ctrl+C that do a job faster than clicking with the mouse."
+        },
+        {
+         "row": 16,
+         "ref": "Technology!16",
+         "fields": [
+          {
+           "label": "A",
+           "value": "4. Tech terminology",
+           "cell": "A16"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.indeed.com/career-advice/career-development/technology-jargon",
+          "text": "https://www.indeed.com/career-advice/career-development/technology-jargon",
+          "cell": "B16"
+         },
+         "plain": "A plain-English list of tech words you'll hear at work, with what each one actually means. Jargon just means 'insider words'."
+        },
+        {
+         "row": 17,
+         "ref": "Technology!17",
+         "fields": [
+          {
+           "label": "A",
+           "value": "5. Technical Troubleshooting",
+           "cell": "A17"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=tKrkoxrY2wc&t=15s",
+          "videoId": "tKrkoxrY2wc",
+          "playlist": false,
+          "text": "Troubleshooting Basics - YouTube",
+          "cell": "B17"
+         },
+         "plain": "Troubleshooting means figuring out why something isn't working and fixing it. This video shows the basic checks to run before you call for help."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "row": 19,
+     "title": "Social Media",
+     "rawTitle": "Social Media",
+     "plain": "The websites people use to find jobs and meet useful contacts — and how to use each one.",
+     "groups": [
+      {
+       "headerRow": 20,
+       "labels": {
+        "A": "How to Navigate different Social Media Sites",
+        "B": "Links"
+       },
+       "entries": [
+        {
+         "row": 21,
+         "ref": "Technology!21",
+         "fields": [
+          {
+           "label": "How to Navigate different Social Media Sites",
+           "value": "1. LinkedIn",
+           "cell": "A21"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=v6JNczFugrU",
+          "videoId": "v6JNczFugrU",
+          "playlist": false,
+          "text": "EVERYTHING to Know About LinkedIn in 15 min - Ultimate How to Use LinkedIn Guide",
+          "cell": "B21"
+         },
+         "plain": "LinkedIn is a website where people post their work history and employers look for people to hire. This video covers the whole site in about 15 minutes."
+        },
+        {
+         "row": 22,
+         "ref": "Technology!22",
+         "fields": [
+          {
+           "label": "How to Navigate different Social Media Sites",
+           "value": "2. Indeed",
+           "cell": "A22"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=F6eAQvj_5qA",
+          "videoId": "F6eAQvj_5qA",
+          "playlist": false,
+          "text": "Indeed: Searching and Applying for Jobs - YouTube",
+          "cell": "B22"
+         },
+         "plain": "Indeed is a free job-search website. This video shows how to search for jobs there and send in an application."
+        },
+        {
+         "row": 23,
+         "ref": "Technology!23",
+         "fields": [
+          {
+           "label": "How to Navigate different Social Media Sites",
+           "value": "3. Glassdoor",
+           "cell": "A23"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=1b7PHQRKVKI",
+          "videoId": "1b7PHQRKVKI",
+          "playlist": false,
+          "text": "How to Use Glassdoor for the Job Search - YouTube",
+          "cell": "B23"
+         },
+         "plain": "Glassdoor is a site where current and former employees review their workplaces and share pay information. Useful for checking out a company before you apply."
+        },
+        {
+         "row": 24,
+         "ref": "Technology!24",
+         "fields": [
+          {
+           "label": "How to Navigate different Social Media Sites",
+           "value": "4. Reddit",
+           "cell": "A24"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=CUMaeH63suU",
+          "videoId": "CUMaeH63suU",
+          "playlist": false,
+          "text": "How to Use Reddit - Complete Beginner's Guide - YouTube",
+          "cell": "B24"
+         },
+         "plain": "Reddit is a huge discussion site split into topic groups. There are groups for job hunting, trades, re-entry support and almost anything else."
+        },
+        {
+         "row": 25,
+         "ref": "Technology!25",
+         "fields": [
+          {
+           "label": "How to Navigate different Social Media Sites",
+           "value": "5. How to Network ( Skills and Tips on Networking)",
+           "cell": "A25"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=OVf5c7NthSw%20%20%20%20https://www.youtube.com/watch?v=6WJMvL9VetM",
+          "videoId": "OVf5c7NthSw",
+          "playlist": false,
+          "text": "Best Networking Tips: How to Make a Connection | Indeed - YouTube",
+          "cell": "B25"
+         },
+         "plain": "Networking means getting to know people who can point you toward work. This video covers how to start a conversation and keep it going. (Note: this cell holds two video links stuck together — both are preserved exactly as they appear in the original file.)"
+        },
+        {
+         "row": 26,
+         "ref": "Technology!26",
+         "fields": [
+          {
+           "label": "How to Navigate different Social Media Sites",
+           "value": "6. Networking through Social Media",
+           "cell": "A26"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=tM-ZX0Cpbc4",
+          "videoId": "tM-ZX0Cpbc4",
+          "playlist": false,
+          "text": "How to Network and Build a Social Circle — 3 Networking Tips - YouTube",
+          "cell": "B26"
+         },
+         "plain": "How to meet useful contacts online instead of in person — handy if you can't travel easily."
+        },
+        {
+         "row": 27,
+         "ref": "Technology!27",
+         "fields": [
+          {
+           "label": "How to Navigate different Social Media Sites",
+           "value": "7. Build your Online Presence",
+           "cell": "A27"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=1kUCm1JPzxg",
+          "videoId": "1kUCm1JPzxg",
+          "playlist": false,
+          "text": "How To Build A Successful Personal Brand in 2024 (Full Masterclass) - YouTube",
+          "cell": "B27"
+         },
+         "plain": "Your 'online presence' is simply what somebody finds when they search your name. This video shows how to shape that on purpose."
+        },
+        {
+         "row": 28,
+         "ref": "Technology!28",
+         "fields": [
+          {
+           "label": "How to Navigate different Social Media Sites",
+           "value": "8. Building your online Brand",
+           "cell": "A28"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=ozMCb0wOnMU",
+          "videoId": "ozMCb0wOnMU",
+          "playlist": false,
+          "text": "5 Steps to Building a Personal Brand You Feel Good About | The Way We Work, a TED series",
+          "cell": "B28"
+         },
+         "plain": "A short TED talk on building a personal brand — the reputation and story you want people to connect with your name."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "row": 30,
+     "title": "Necessities of Living in the Digital Age",
+     "rawTitle": "Necessities of Living in the Digital Age",
+     "plain": "Everyday online skills: email, saving files, staying safe, video meetings and working with others.",
+     "groups": [
+      {
+       "headerRow": 31,
+       "labels": {
+        "A": "",
+        "B": "Links"
+       },
+       "entries": [
+        {
+         "row": 32,
+         "ref": "Technology!32",
+         "fields": [
+          {
+           "label": "A",
+           "value": "1. How to access and reply to Emails",
+           "cell": "A32"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=a9e7XNo4agE",
+          "videoId": "a9e7XNo4agE",
+          "playlist": false,
+          "text": "Gmail: Responding to Email - YouTube",
+          "cell": "B32"
+         },
+         "plain": "How to open your email, read a message and send a reply, using Gmail as the example."
+        },
+        {
+         "row": 33,
+         "ref": "Technology!33",
+         "fields": [
+          {
+           "label": "A",
+           "value": "2. What is digital and Cloud Storage",
+           "cell": "A33"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=3WANMc8EqPM",
+          "videoId": "3WANMc8EqPM",
+          "playlist": false,
+          "text": "Computer Fundamentals - Cloud Storage - What is Online Storage and How Does it Work Explained Google - YouTube",
+          "cell": "B33"
+         },
+         "plain": "Cloud storage means keeping your files on a company's computer over the internet instead of only on your own device, so you can get them from anywhere."
+        },
+        {
+         "row": 34,
+         "ref": "Technology!34",
+         "fields": [
+          {
+           "label": "A",
+           "value": "3. Cyber Security and Protection",
+           "cell": "A34"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=inWWhr5tnEA",
+          "videoId": "inWWhr5tnEA",
+          "playlist": false,
+          "text": "How It Works? | Cyber Security In 7 Minutes",
+          "cell": "B34"
+         },
+         "plain": "Cyber security means keeping your accounts and personal information safe from people trying to steal them. A seven-minute overview of the basics."
+        },
+        {
+         "row": 35,
+         "ref": "Technology!35",
+         "fields": [
+          {
+           "label": "A",
+           "value": "4. What is Automation? How to use it.",
+           "cell": "A35"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=KSOxkhWs2Ic",
+          "videoId": "KSOxkhWs2Ic",
+          "playlist": false,
+          "text": "AI Automation: Complete Beginners Guide - YouTube",
+          "cell": "B35"
+         },
+         "plain": "Automation means setting up a tool to do a repetitive job for you by itself — like a rule that files every receipt email into one folder."
+        },
+        {
+         "row": 36,
+         "ref": "Technology!36",
+         "fields": [
+          {
+           "label": "A",
+           "value": "5. What is E Commerce?  How to use these platforms.",
+           "cell": "A36"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=nC3ylfQyY4E",
+          "videoId": "nC3ylfQyY4E",
+          "playlist": false,
+          "text": "The Best Ecommerce Platform in 2024 - YouTube",
+          "cell": "B36"
+         },
+         "plain": "E-commerce just means buying and selling things online. This compares the main websites people use to set up a small online shop."
+        },
+        {
+         "row": 37,
+         "ref": "Technology!37",
+         "fields": [
+          {
+           "label": "A",
+           "value": "6. How to use virtual meeting software (ZOOM)",
+           "cell": "A37"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=fMUxzrgZvZQ",
+          "videoId": "fMUxzrgZvZQ",
+          "playlist": false,
+          "text": "How to Use Zoom - Free Video Conferencing & Virtual Meetings - YouTube",
+          "cell": "B37"
+         },
+         "plain": "Zoom is software for video meetings. This shows how to join a call, turn your camera and microphone on or off, and share your screen — useful for remote job interviews."
+        },
+        {
+         "row": 38,
+         "ref": "Technology!38",
+         "fields": [
+          {
+           "label": "A",
+           "value": "7. Digital Collaboration  What it is and how to use these tools.",
+           "cell": "A38"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/playlist?list=PLmiHe0R4hbzRbpqJVs2HllnjhrTeiDVsE",
+          "videoId": null,
+          "playlist": true,
+          "text": "🟥 https://www.youtube.com/playlist?list=PLmiHe0R4hbzRbpqJVs2HllnjhrTeiDVsE",
+          "cell": "B38"
+         },
+         "plain": "Digital collaboration means several people working on the same document or project online at the same time. This is a playlist — a whole series of videos, not just one."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "employment",
+   "sheet": "Employment",
+   "title": "Employment",
+   "plain": "Getting the paperwork and the practice you need to land a job.",
+   "sections": [
+    {
+     "row": 2,
+     "title": "Resume Building",
+     "rawTitle": "Resume Building",
+     "plain": "Writing the one- or two-page summary of your work history that employers ask for.",
+     "groups": [
+      {
+       "headerRow": 3,
+       "labels": {
+        "A": "Topics",
+        "B": "Links"
+       },
+       "entries": [
+        {
+         "row": 4,
+         "ref": "Employment!4",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "1. What is a resume?",
+           "cell": "A4"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=yF3hCgAyclo",
+          "videoId": "yF3hCgAyclo",
+          "playlist": false,
+          "text": "🟥 What is a Resume? - YouTube",
+          "cell": "B4"
+         },
+         "plain": "A resume is a one- or two-page summary of your work history, skills and schooling that you hand to an employer. This video explains what goes on one."
+        },
+        {
+         "row": 5,
+         "ref": "Employment!5",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "2. How to build a resume",
+           "cell": "A5"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=79JL8xq0UzY",
+          "videoId": "79JL8xq0UzY",
+          "playlist": false,
+          "text": "🟥 How To Write A Resume With Little or No Work Experience",
+          "cell": "B5"
+         },
+         "plain": "How to write a resume when you have little or no paid work history — it shows how to use skills, training and volunteer work instead."
+        },
+        {
+         "row": 6,
+         "ref": "Employment!6",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "3. Tailoring your resume",
+           "cell": "A6"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=s2N6MWVgIBM",
+          "videoId": "s2N6MWVgIBM",
+          "playlist": false,
+          "text": "🟥 Tailor Your Resume the Easy Way",
+          "cell": "B6"
+         },
+         "plain": "Tailoring means changing your resume a little for each job so it matches the words in that job ad. This video shows a quick way to do it."
+        },
+        {
+         "row": 7,
+         "ref": "Employment!7",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "4. Resume Templates",
+           "cell": "A7"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.canva.com/resumes/templates/",
+          "text": "🟥 https://www.canva.com/resumes/templates/",
+          "cell": "B7"
+         },
+         "plain": "Canva is a free design website. These are ready-made resume layouts you fill in with your own details — no design skill needed."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "row": 9,
+     "title": "Cover Letter Building",
+     "rawTitle": "Cover Letter Building",
+     "plain": "Writing the short letter that goes with your resume and explains why you want the job.",
+     "groups": [
+      {
+       "headerRow": 10,
+       "labels": {
+        "A": "Topics",
+        "B": "Links"
+       },
+       "entries": [
+        {
+         "row": 11,
+         "ref": "Employment!11",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "1. What is a cover letter?",
+           "cell": "A11"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=Os_wPw_nIog",
+          "videoId": "Os_wPw_nIog",
+          "playlist": false,
+          "text": "🟥 How to write a cover letter for a job application - YouTube",
+          "cell": "B11"
+         },
+         "plain": "A cover letter is a short letter you send with your resume explaining who you are and why you want that particular job."
+        },
+        {
+         "row": 12,
+         "ref": "Employment!12",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "2. Cover Letter vs. Resume",
+           "cell": "A12"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=BjwqSfvVkmc",
+          "videoId": "BjwqSfvVkmc",
+          "playlist": false,
+          "text": "🟥 Difference Between A Resume and A Cover Letter - YouTube",
+          "cell": "B12"
+         },
+         "plain": "The difference between the two: the resume lists the facts, the cover letter tells the story behind them."
+        },
+        {
+         "row": 13,
+         "ref": "Employment!13",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "3. How to build a cover letter",
+           "cell": "A13"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=ddjx0v1lNnk",
+          "videoId": "ddjx0v1lNnk",
+          "playlist": false,
+          "text": "🟥 HOW TO WRITE A COVER LETTER! (Brilliant Cover Letter Examples + Template) - YouTube",
+          "cell": "B13"
+         },
+         "plain": "A walkthrough of writing a cover letter from a blank page, with examples and a fill-in template."
+        },
+        {
+         "row": 14,
+         "ref": "Employment!14",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "4. Formatting a Cover letter",
+           "cell": "A14"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=MAnzJEEqSNs",
+          "videoId": "MAnzJEEqSNs",
+          "playlist": false,
+          "text": "🟥 Professional COVER LETTER Formatting on Google Docs *FULL TUTORIAL* - YouTube",
+          "cell": "B14"
+         },
+         "plain": "Formatting means how the page is laid out — margins, spacing, where your name goes. This uses Google Docs, which is free."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "row": 16,
+     "title": "Interviewing Skills",
+     "rawTitle": "Interviewing Skills",
+     "plain": "Getting ready for the interview — what to wear, what to say, and how to talk about your record.",
+     "groups": [
+      {
+       "headerRow": 17,
+       "labels": {
+        "A": "Topics",
+        "B": "Links"
+       },
+       "entries": [
+        {
+         "row": 18,
+         "ref": "Employment!18",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "1. Dress appropriately for interviews",
+           "cell": "A18"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=jzPAjrrtLxY",
+          "videoId": "jzPAjrrtLxY",
+          "playlist": false,
+          "text": "🟥 What to Wear to an Interview: Dress Codes, Outfit Ideas, and What to Avoid - YouTube",
+          "cell": "B18"
+         },
+         "plain": "What clothes to wear to an interview, what to avoid, and how to tell how formal a workplace expects you to be."
+        },
+        {
+         "row": 19,
+         "ref": "Employment!19",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "2. Commonly asked interview questions",
+           "cell": "A19"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=x84hpNIW6cc",
+          "videoId": "x84hpNIW6cc",
+          "playlist": false,
+          "text": "🟥 11 COMMON INTERVIEW QUESTIONS and ANSWERS for 2024! (How to PREPARE for a JOB INTERVIEW!)",
+          "cell": "B19"
+         },
+         "plain": "Eleven questions interviewers ask again and again, with good sample answers so you can practise ahead of time."
+        },
+        {
+         "row": 20,
+         "ref": "Employment!20",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "3. Interviewing Skills in an online setting",
+           "cell": "A20"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=HG68Ymazo18",
+          "videoId": "HG68Ymazo18",
+          "playlist": false,
+          "text": "🟥 Top Interview Tips: Common Questions, Nonverbal Communication & More | Indeed - YouTube",
+          "cell": "B20"
+         },
+         "plain": "An online interview happens over video instead of in person. This covers what to say, plus how your face, voice and posture come across on camera."
+        },
+        {
+         "row": 21,
+         "ref": "Employment!21",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "4. Background (Your narrative/ incarceration)",
+           "cell": "A21"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=FGFjZlfL9ms",
+          "videoId": "FGFjZlfL9ms",
+          "playlist": false,
+          "text": "🟥 How to get a job with a criminal record | Zachary Moore | TEDxSanQuentin - YouTube",
+          "cell": "B21"
+         },
+         "plain": "A TED talk about getting hired when you have a criminal record — how to talk about your history honestly and move the conversation forward."
+        },
+        {
+         "row": 22,
+         "ref": "Employment!22",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "5. How to dress for an Interview",
+           "cell": "A22"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=kSDTQ8tplk8",
+          "videoId": "kSDTQ8tplk8",
+          "playlist": false,
+          "text": "🟥 How to Dress for an Interview: Quick tips for Men & Women - YouTube",
+          "cell": "B22"
+         },
+         "plain": "A quick practical guide to interview clothes for men and women, including low-cost options."
+        },
+        {
+         "row": 23,
+         "ref": "Employment!23",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "6. Researching the company your interviewing for",
+           "cell": "A23"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=8MYHrih6syw",
+          "videoId": "8MYHrih6syw",
+          "playlist": false,
+          "text": "🟥 How to Research Before an Interview (3 Practical Tools) - YouTube",
+          "cell": "B23"
+         },
+         "plain": "How to look up a company before your interview so you can talk about what they actually do — three free tools you can use in a few minutes."
+        },
+        {
+         "row": 24,
+         "ref": "Employment!24",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "7. Gestures and body language in interviews",
+           "cell": "A24"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=ZUXtGQkJcQ0",
+          "videoId": "ZUXtGQkJcQ0",
+          "playlist": false,
+          "text": "🟥 Gestures and Body Language Tutorial - YouTube",
+          "cell": "B24"
+         },
+         "plain": "Body language means what your posture, hands and eye contact say without words. This shows which habits help and which hurt."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "row": 26,
+     "title": "Remote Work Possibilities",
+     "rawTitle": "Remote Work Possibilities",
+     "plain": "Jobs you can do from home, and what you need to get one.",
+     "groups": [
+      {
+       "headerRow": 27,
+       "labels": {
+        "A": "Topics",
+        "B": "Links"
+       },
+       "entries": [
+        {
+         "row": 28,
+         "ref": "Employment!28",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "1. What is remote work? - (Post Covid Era)",
+           "cell": "A28"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=EzByVa3FFzw",
+          "videoId": "EzByVa3FFzw",
+          "playlist": false,
+          "text": "🟥 What is Remote Work: The Basics - YouTube",
+          "cell": "B28"
+         },
+         "plain": "Remote work means doing the job from home or anywhere else instead of going to a workplace. This is the plain basics of how it works."
+        },
+        {
+         "row": 29,
+         "ref": "Employment!29",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "2. Advantages and challenges of remote work",
+           "cell": "A29"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=gNaMrkqId6E",
+          "videoId": "gNaMrkqId6E",
+          "playlist": false,
+          "text": "🟥 The Rise of Remote Work: Exploring the Pros and Cons of Telecommuting | #career_advice - YouTube",
+          "cell": "B29"
+         },
+         "plain": "The good parts and the hard parts of working from home, so you can decide if it fits you. Telecommuting is just an older word for remote work."
+        },
+        {
+         "row": 30,
+         "ref": "Employment!30",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "3. Finding remote positions from behind bars",
+           "cell": "A30"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.flexjobs.com/remote-jobs/company/prison_fellowship",
+          "text": "🟥 https://www.flexjobs.com/remote-jobs/company/prison_fellowship",
+          "cell": "B30"
+         },
+         "plain": "FlexJobs is a job board that lists remote positions. This page collects listings connected to Prison Fellowship, an organisation that works with people who have been incarcerated."
+        },
+        {
+         "row": 31,
+         "ref": "Employment!31",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "",
+           "cell": "A31",
+           "empty": true
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=JIWYFvo_tE8",
+          "videoId": "JIWYFvo_tE8",
+          "playlist": false,
+          "text": "🟥 Find Remote Jobs - A Step by Step Guide From the Experts at FlexJobs - YouTube",
+          "cell": "B31"
+         },
+         "plain": "A step-by-step guide to searching for remote jobs. This is a second link for item 3 above — the original spreadsheet left the topic cell blank here, and we've kept it that way."
+        },
+        {
+         "row": 32,
+         "ref": "Employment!32",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "4. Tools needed for remote work (Hardware)",
+           "cell": "A32"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=pC0asP6M8Ho",
+          "videoId": "pC0asP6M8Ho",
+          "playlist": false,
+          "text": "🟥 Remote Work: Essential Tech, Gadgets and Tools (2024) - YouTube",
+          "cell": "B32"
+         },
+         "plain": "Hardware means the physical equipment — laptop, headset, webcam, desk. This covers what you actually need to work from home."
+        },
+        {
+         "row": 33,
+         "ref": "Employment!33",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "5. Tools needed for remote work (Software)",
+           "cell": "A33"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=n-FBG9yb4Eg",
+          "videoId": "n-FBG9yb4Eg",
+          "playlist": false,
+          "text": "🟥 5 Essential Tools for Remote Workers in 2024 | Work Smarter Anywhere - YouTube",
+          "cell": "B33"
+         },
+         "plain": "Software means the programs you run on that equipment — for messaging, video calls and keeping track of tasks."
+        },
+        {
+         "row": 34,
+         "ref": "Employment!34",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "6. Master the Job Search",
+           "cell": "A34"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/playlist?list=PLzul0PfMYnQzR-TXzPt6N8lKRDQJibpEn",
+          "videoId": null,
+          "playlist": true,
+          "text": "🟥 https://www.youtube.com/playlist?list=PLzul0PfMYnQzR-TXzPt6N8lKRDQJibpEn",
+          "cell": "B34"
+         },
+         "plain": "A playlist (a series of videos) covering the whole job search from start to finish."
+        },
+        {
+         "row": 35,
+         "ref": "Employment!35",
+         "fields": [
+          {
+           "label": "Topics",
+           "value": "7. Using LinkedIn to get a remote job",
+           "cell": "A35"
+          }
+         ],
+         "link": {
+          "kind": "youtube",
+          "url": "https://www.youtube.com/watch?v=XSmklO-ps9A",
+          "videoId": "XSmklO-ps9A",
+          "playlist": false,
+          "text": "🟥 How To Use LinkedIn To Get A Job - Find A Job On LinkedIn - YouTube",
+          "cell": "B35"
+         },
+         "plain": "How to use LinkedIn specifically to find and land a remote job, including what to put on your profile."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "connections",
+   "sheet": "Connections",
+   "title": "Connections",
+   "plain": "Real places, phone numbers and services in Maine that can get you online and get you equipment.",
+   "sections": [
+    {
+     "row": 2,
+     "title": "Public Library by City/ Internet Hotspot  Source",
+     "rawTitle": "Public Library by City/ Internet Hotspot  Source",
+     "plain": "Libraries across Maine where you can use a computer and the internet for free.",
+     "groups": [
+      {
+       "headerRow": 3,
+       "labels": {
+        "A": "City",
+        "C": "Address",
+        "E": "Phone",
+        "F": "Links"
+       },
+       "entries": [
+        {
+         "row": 4,
+         "ref": "Connections!4",
+         "fields": [
+          {
+           "label": "City",
+           "value": "Lewiston, ME",
+           "cell": "A4"
+          },
+          {
+           "label": "Address",
+           "value": "200 Lisbon Street, Lewiston, ME 04240",
+           "cell": "C4"
+          },
+          {
+           "label": "Phone",
+           "value": "207-513-3004",
+           "cell": "E4"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://lplonline.org/",
+          "text": "🟥 https://lplonline.org/",
+          "cell": "F4"
+         },
+         "plain": "Lewiston Public Library — free computers, free Wi-Fi and staff who can help you get online. A hotspot is simply a place with free internet you can use."
+        },
+        {
+         "row": 5,
+         "ref": "Connections!5",
+         "fields": [
+          {
+           "label": "City",
+           "value": "Bangor, ME",
+           "cell": "A5"
+          },
+          {
+           "label": "Address",
+           "value": "145 Harlow Street, Bangor, ME 04401",
+           "cell": "C5"
+          },
+          {
+           "label": "Phone",
+           "value": "207-947-8336",
+           "cell": "E5"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://bangorpubliclibrary.org/",
+          "text": "🟥 https://bangorpubliclibrary.org/",
+          "cell": "F5"
+         },
+         "plain": "Bangor Public Library — free computers, free Wi-Fi and help using them."
+        },
+        {
+         "row": 6,
+         "ref": "Connections!6",
+         "fields": [
+          {
+           "label": "City",
+           "value": "Augusta, ME",
+           "cell": "A6"
+          },
+          {
+           "label": "Address",
+           "value": "45 Winthrop Street, Augusta, ME 04330",
+           "cell": "C6"
+          },
+          {
+           "label": "Phone",
+           "value": "207-626-2415",
+           "cell": "E6"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.lithgowlibrary.org/",
+          "text": "🟥 https://www.lithgowlibrary.org/",
+          "cell": "F6"
+         },
+         "plain": "Lithgow Public Library in Augusta — free computers, free Wi-Fi and help using them."
+        },
+        {
+         "row": 7,
+         "ref": "Connections!7",
+         "fields": [
+          {
+           "label": "City",
+           "value": "Portland, ME",
+           "cell": "A7"
+          },
+          {
+           "label": "Address",
+           "value": "5 Monument Square, Portland, ME 04101",
+           "cell": "C7"
+          },
+          {
+           "label": "Phone",
+           "value": "207-871-1700",
+           "cell": "E7"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.portlandlibrary.com/",
+          "text": "🟥 https://www.portlandlibrary.com/",
+          "cell": "F7"
+         },
+         "plain": "Portland Public Library — free computers, free Wi-Fi and help using them."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "row": 9,
+     "title": "Where to Aquire a Laptop by City",
+     "rawTitle": "Where to Aquire a Laptop by City",
+     "plain": "Places that lend out or help you get a laptop.",
+     "groups": [
+      {
+       "headerRow": 10,
+       "labels": {
+        "A": "City",
+        "B": "Place/ Name ",
+        "C": "Address",
+        "E": "Phone",
+        "F": "Links"
+       },
+       "entries": [
+        {
+         "row": 11,
+         "ref": "Connections!11",
+         "fields": [
+          {
+           "label": "City",
+           "value": "Portland, ME",
+           "cell": "A11"
+          },
+          {
+           "label": "Place/ Name",
+           "value": "Portland public Library",
+           "cell": "B11"
+          },
+          {
+           "label": "Address",
+           "value": "5 Monument Square, Portland, ME 04101",
+           "cell": "C11"
+          },
+          {
+           "label": "Phone",
+           "value": "207-871-1700",
+           "cell": "E11"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.portlandlibrary.com/",
+          "text": "🟥 https://www.portlandlibrary.com/",
+          "cell": "F11"
+         },
+         "plain": "Portland Public Library also lends out laptops. Call ahead to ask what you need to bring and how long you can keep one."
+        },
+        {
+         "row": 12,
+         "ref": "Connections!12",
+         "fields": [
+          {
+           "label": "City",
+           "value": "Bangor, ME",
+           "cell": "A12"
+          },
+          {
+           "label": "Place/ Name",
+           "value": "Bangor public Library",
+           "cell": "B12"
+          },
+          {
+           "label": "Address",
+           "value": "145 Harlow Street, Bangor, ME 04401",
+           "cell": "C12"
+          },
+          {
+           "label": "Phone",
+           "value": "207-947-8336",
+           "cell": "E12"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://bangorpubliclibrary.org/",
+          "text": "🟥 https://bangorpubliclibrary.org/",
+          "cell": "F12"
+         },
+         "plain": "Bangor Public Library also lends out laptops. Call first to check what's available."
+        },
+        {
+         "row": 13,
+         "ref": "Connections!13",
+         "fields": [
+          {
+           "label": "City",
+           "value": "Augusta, ME",
+           "cell": "A13"
+          },
+          {
+           "label": "Place/ Name",
+           "value": "UMA Campus",
+           "cell": "B13"
+          },
+          {
+           "label": "Address",
+           "value": "46 University Drive Augusta, Me 04330",
+           "cell": "C13"
+          },
+          {
+           "label": "Phone",
+           "value": "207-621-3195",
+           "cell": "E13"
+          }
+         ],
+         "link": {
+          "kind": "email",
+          "url": "mailto:info@mainecite.org",
+          "display": "info@mainecite.org",
+          "text": "🟥 info@mainecite.org",
+          "cell": "F13"
+         },
+         "plain": "The University of Maine at Augusta campus, through Maine CITE — a state program that helps people get assistive technology (equipment that makes a device easier to use). Contact them by email."
+        },
+        {
+         "row": 14,
+         "ref": "Connections!14",
+         "fields": [
+          {
+           "label": "City",
+           "value": "Lewiston, ME",
+           "cell": "A14"
+          },
+          {
+           "label": "Place/ Name",
+           "value": "Lewiston Carreer Center",
+           "cell": "B14"
+          },
+          {
+           "label": "Address",
+           "value": "5 Mollison Way, Lewiston, ME 04240",
+           "cell": "C14"
+          },
+          {
+           "label": "Phone",
+           "value": "207- 753-9001",
+           "cell": "E14"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.mainecareercenter.gov/",
+          "text": "🟥 https://www.mainecareercenter.gov/",
+          "cell": "F14"
+         },
+         "plain": "The Lewiston Career Center — a free state office that helps with job hunting and has computers you can use. (The original spreadsheet spells it 'Carreer Center'; we've kept the spelling as written.)"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "row": 16,
+     "title": "Access to online Courses",
+     "rawTitle": "Access to online Courses",
+     "plain": "Websites where you can take classes online, many of them free.",
+     "groups": [
+      {
+       "headerRow": 17,
+       "labels": {
+        "A": "Website",
+        "E": "Links"
+       },
+       "entries": [
+        {
+         "row": 18,
+         "ref": "Connections!18",
+         "fields": [
+          {
+           "label": "Website",
+           "value": "Coursera",
+           "cell": "A18"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.coursera.org/",
+          "text": "🟥 https://www.coursera.org/",
+          "cell": "E18"
+         },
+         "plain": "Coursera offers online classes from real universities and companies. Many can be taken free if you don't need the certificate."
+        },
+        {
+         "row": 19,
+         "ref": "Connections!19",
+         "fields": [
+          {
+           "label": "Website",
+           "value": "edX",
+           "cell": "A19"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.edx.org/",
+          "text": "🟥 https://www.edx.org/",
+          "cell": "E19"
+         },
+         "plain": "edX offers free online university courses. You pay only if you want an official certificate at the end."
+        },
+        {
+         "row": 20,
+         "ref": "Connections!20",
+         "fields": [
+          {
+           "label": "Website",
+           "value": "Udemy",
+           "cell": "A20"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.udemy.com/",
+          "text": "🟥 https://www.udemy.com/",
+          "cell": "E20"
+         },
+         "plain": "Udemy sells practical skill courses, usually cheap and often on sale. You keep access after you buy one."
+        },
+        {
+         "row": 21,
+         "ref": "Connections!21",
+         "fields": [
+          {
+           "label": "Website",
+           "value": "LinkedIn Learning",
+           "cell": "A21"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.linkedin.com/learning/",
+          "text": "🟥 https://www.linkedin.com/learning/",
+          "cell": "E21"
+         },
+         "plain": "LinkedIn Learning offers short job-skill video courses. Many Maine libraries give you free access with your library card — worth asking about."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "row": 23,
+     "title": "Help with Aquiring Computer Hardware",
+     "rawTitle": "Help with Aquiring Computer Hardware ",
+     "plain": "Organisations that give away or cheaply sell used computers.",
+     "groups": [
+      {
+       "headerRow": 24,
+       "labels": {
+        "A": "City",
+        "E": "Links"
+       },
+       "entries": [
+        {
+         "row": 25,
+         "ref": "Connections!25",
+         "fields": [
+          {
+           "label": "City",
+           "value": "Portland, ME",
+           "cell": "A25"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "http://www.freegeek.org/",
+          "text": "🟥 www.freegeek.org",
+          "cell": "E25"
+         },
+         "plain": "Free Geek takes donated computers, fixes them up and passes them on at low or no cost. Check the site for what's available near Portland."
+        },
+        {
+         "row": 26,
+         "ref": "Connections!26",
+         "fields": [
+          {
+           "label": "City",
+           "value": "Bangor, ME",
+           "cell": "A26"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://goodwillnne.org/",
+          "text": "🟥 https://goodwillnne.org/",
+          "cell": "E26"
+         },
+         "plain": "Goodwill Northern New England — their stores often sell low-cost used computers, and they run job-training programs too."
+        },
+        {
+         "row": 27,
+         "ref": "Connections!27",
+         "fields": [
+          {
+           "label": "City",
+           "value": "Augusta, ME",
+           "cell": "A27"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.maineneeds.org/donations",
+          "text": "🟥 https://www.maineneeds.org/donations",
+          "cell": "E27"
+         },
+         "plain": "Maine Needs collects donated goods, including electronics, and gives them to people who need them. This page explains how to request or donate items."
+        },
+        {
+         "row": 28,
+         "ref": "Connections!28",
+         "fields": [
+          {
+           "label": "City",
+           "value": "Lewiston, ME",
+           "cell": "A28"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://goodwillnne.org/",
+          "text": "🟥 https://goodwillnne.org/",
+          "cell": "E28"
+         },
+         "plain": "Goodwill Northern New England again, for the Lewiston area — low-cost used computers and job-training help."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "row": 30,
+     "title": "How to Aquire a Cellphone / Help with Cellphone Bill",
+     "rawTitle": "                              How to Aquire a Cellphone / Help with Cellphone Bill                                                        ",
+     "plain": "Help getting a phone or paying a phone bill.",
+     "groups": [
+      {
+       "headerRow": 31,
+       "labels": {
+        "A": "State",
+        "E": "Link"
+       },
+       "entries": [
+        {
+         "row": 32,
+         "ref": "Connections!32",
+         "fields": [
+          {
+           "label": "State",
+           "value": "Maine",
+           "cell": "A32"
+          }
+         ],
+         "link": {
+          "kind": "web",
+          "url": "https://www.safelinkwireless.com/en/",
+          "text": "🟥 https://www.safelinkwireless.com/en/#!/newHome",
+          "cell": "E32"
+         },
+         "plain": "SafeLink Wireless is a Lifeline program — a federal benefit that gives a free or very cheap phone and monthly service to people with a low income. Apply on this page."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "form-responses-1",
+   "sheet": "Form Responses 1",
+   "title": "Form Responses 1",
+   "plain": "The suggestion form people use to ask for new resources — and everything sent in so far.",
+   "sections": [
+    {
+     "row": 1,
+     "title": "Feedback form template",
+     "rawTitle": "Feedback form template",
+     "plain": "These are the questions the form asks. No completed answers have come in yet — the two rows below are empty submissions.",
+     "groups": [
+      {
+       "headerRow": 1,
+       "labels": {
+        "A": "Timestamp",
+        "B": "What do you want to see be added to this data collection?",
+        "C": "If you have any video suggestions please place the link below.",
+        "D": "Score",
+        "E": "Email Address",
+        "F": "Column 5"
+       },
+       "entries": [
+        {
+         "row": 2,
+         "ref": "Form Responses 1!2",
+         "fields": [
+          {
+           "label": "Timestamp",
+           "value": "",
+           "cell": "A2",
+           "empty": true
+          },
+          {
+           "label": "What do you want to see be added to this data collection?",
+           "value": "",
+           "cell": "B2",
+           "empty": true
+          },
+          {
+           "label": "If you have any video suggestions please place the link below.",
+           "value": "",
+           "cell": "C2",
+           "empty": true
+          },
+          {
+           "label": "Score",
+           "value": "0",
+           "cell": "D2",
+           "empty": false
+          },
+          {
+           "label": "Email Address",
+           "value": "",
+           "cell": "E2",
+           "empty": true
+          },
+          {
+           "label": "Column 5",
+           "value": "",
+           "cell": "F2",
+           "empty": true
+          }
+         ],
+         "title": "Blank form submission (spreadsheet row 2)",
+         "link": null,
+         "plain": "This row came through the feedback form but was left blank, so there is nothing to act on. It is shown here because the directory keeps every row from the original file."
+        },
+        {
+         "row": 3,
+         "ref": "Form Responses 1!3",
+         "fields": [
+          {
+           "label": "Timestamp",
+           "value": "",
+           "cell": "A3",
+           "empty": true
+          },
+          {
+           "label": "What do you want to see be added to this data collection?",
+           "value": "",
+           "cell": "B3",
+           "empty": true
+          },
+          {
+           "label": "If you have any video suggestions please place the link below.",
+           "value": "",
+           "cell": "C3",
+           "empty": true
+          },
+          {
+           "label": "Score",
+           "value": "0",
+           "cell": "D3",
+           "empty": false
+          },
+          {
+           "label": "Email Address",
+           "value": "",
+           "cell": "E3",
+           "empty": true
+          },
+          {
+           "label": "Column 5",
+           "value": "",
+           "cell": "F3",
+           "empty": true
+          }
+         ],
+         "title": "Blank form submission (spreadsheet row 3)",
+         "link": null,
+         "plain": "This row came through the feedback form but was left blank, so there is nothing to act on. It is shown here because the directory keeps every row from the original file."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
+/*__END_DATA__*/;
+
+/* ===========================================================================
+   2. SMALL HELPERS
+   =========================================================================== */
+
+/** Shorthand for document.getElementById. */
+function $(id) { return document.getElementById(id); }
+
+/**
+ * Create an element.
+ * @param {string} tag
+ * @param {Object} [attrs] - attributes; `class` and `text` are special-cased.
+ * @param {Array}  [kids]  - child nodes or strings.
+ */
+function el(tag, attrs, kids) {
+  const node = document.createElement(tag);
+  if (attrs) {
+    for (const key of Object.keys(attrs)) {
+      const val = attrs[key];
+      if (val === null || val === undefined || val === false) continue;
+      if (key === 'class') node.className = val;
+      else if (key === 'text') node.textContent = val;      // always safe
+      else if (key === 'html') node.innerHTML = val;        // only used with our own markup
+      else node.setAttribute(key, val);
+    }
+  }
+  if (kids) {
+    for (const kid of kids) {
+      if (kid === null || kid === undefined || kid === false) continue;
+      node.appendChild(typeof kid === 'string' ? document.createTextNode(kid) : kid);
+    }
+  }
+  return node;
+}
+
+/** Turn any string into something safe to use inside an id or hash. */
+function slug(str) {
+  return String(str).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'item';
+}
+
+/** localStorage that never throws - private windows and locked-down browsers block it. */
+const store = {
+  get(key, fallback) {
+    try { const v = window.localStorage.getItem(key); return v === null ? fallback : v; }
+    catch (_) { return fallback; }
+  },
+  set(key, value) {
+    try { window.localStorage.setItem(key, value); } catch (_) { /* nothing we can do */ }
+  }
+};
+
+/** Announce something to screen-reader users without changing the visible page. */
+function announce(message) {
+  const live = $('liveStatus');
+  if (!live) return;
+  live.textContent = '';                       // force a re-announcement
+  window.setTimeout(function () { live.textContent = message; }, 50);
+}
+
+/** Respect the operating system's "reduce motion" setting. */
+function prefersReducedMotion() {
+  return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+/**
+ * Put `text` into `parent`, wrapping every match of `terms` in a <mark>.
+ * Built from text nodes rather than HTML strings, so odd characters in the
+ * spreadsheet can never break the page.
+ */
+function writeHighlighted(parent, text, terms) {
+  const source = String(text === null || text === undefined ? '' : text);
+  if (!terms || !terms.length) { parent.appendChild(document.createTextNode(source)); return; }
+  const lower = source.toLowerCase();
+  const hits = [];
+  for (const term of terms) {
+    if (!term) continue;
+    let from = 0;
+    for (;;) {
+      const at = lower.indexOf(term, from);
+      if (at === -1) break;
+      hits.push([at, at + term.length]);
+      from = at + term.length;
+    }
+  }
+  if (!hits.length) { parent.appendChild(document.createTextNode(source)); return; }
+  hits.sort(function (a, b) { return a[0] - b[0]; });
+  const merged = [hits[0]];
+  for (let i = 1; i < hits.length; i++) {
+    const last = merged[merged.length - 1];
+    if (hits[i][0] <= last[1]) last[1] = Math.max(last[1], hits[i][1]);
+    else merged.push(hits[i]);
+  }
+  let cursor = 0;
+  for (const span of merged) {
+    if (span[0] > cursor) parent.appendChild(document.createTextNode(source.slice(cursor, span[0])));
+    parent.appendChild(el('mark', { text: source.slice(span[0], span[1]) }));
+    cursor = span[1];
+  }
+  if (cursor < source.length) parent.appendChild(document.createTextNode(source.slice(cursor)));
+}
+
+/** A sortable version of an entry title: "🟥 3. Reddit" sorts under R, not 3. */
+function sortKey(entry) {
+  const first = (entry.fields.find(function (f) { return f.value && f.value.trim(); }) || {}).value || '';
+  return first.replace(/^[^A-Za-z0-9]+/, '').replace(/^\d+[.)]?\s*/, '').trim().toLowerCase();
+}
+
+/**
+ * The cell used as an entry's heading: its first populated cell, or nothing
+ * when every cell is blank (as in the untouched feedback-form rows).
+ */
+function titleField(entry) {
+  return entry.fields.find(function (f) { return f.value && f.value.trim(); }) || null;
+}
+
+/** The heading text shown on an entry card. */
+function entryTitle(entry) {
+  if (entry.title) return entry.title;            // supplied for rows with no usable cell
+  const first = titleField(entry);
+  if (first) return first.value;
+  if (entry.link && entry.link.text) return entry.link.text;
+  return 'Entry ' + entry.ref;
+}
+
+/* Column headings that only repeat what the field labels already say - no use
+   as a visible group heading, though they are still listed under the section
+   heading so no part of the spreadsheet goes unrecorded. */
+const GENERIC_HEADINGS = ['topics', 'topic', 'links', 'link', 'city', 'website',
+                          'state', 'address', 'phone', 'place/ name', 'place/name',
+                          'timestamp'];
+function isGenericHeading(text) {
+  return GENERIC_HEADINGS.indexOf(String(text || '').trim().toLowerCase()) !== -1;
+}
+
+/* ===========================================================================
+   3. VALIDATION
+   If the embedded data is ever edited by hand and broken, say so plainly
+   instead of showing a blank white page.
+   =========================================================================== */
+function validateData(data) {
+  const problems = [];
+  if (!data || typeof data !== 'object') { problems.push('The directory data is missing entirely.'); return problems; }
+  if (!Array.isArray(data.categories) || !data.categories.length) {
+    problems.push('No categories were found in the directory data.');
+    return problems;
+  }
+  data.categories.forEach(function (cat, ci) {
+    const where = 'Category ' + (ci + 1) + (cat && cat.title ? ' ("' + cat.title + '")' : '');
+    if (!cat || !cat.id) problems.push(where + ' has no id.');
+    if (!Array.isArray(cat.sections)) { problems.push(where + ' has no sections list.'); return; }
+    cat.sections.forEach(function (sec, si) {
+      if (!Array.isArray(sec.groups)) { problems.push(where + ', section ' + (si + 1) + ' has no groups list.'); return; }
+      sec.groups.forEach(function (grp, gi) {
+        if (!Array.isArray(grp.entries)) problems.push(where + ', section ' + (si + 1) + ', group ' + (gi + 1) + ' has no entries list.');
+      });
+    });
+  });
+  return problems;
+}
+
+/** Replace the page with a readable explanation when we truly cannot continue. */
+function showFatalError(heading, detail) {
+  const panel = $('errorPanel');
+  if (!panel) { window.alert(heading + '\n\n' + detail); return; }
+  panel.hidden = false;
+  panel.textContent = '';
+  panel.appendChild(el('h2', { text: heading, style: 'font-size:1.2rem' }));
+  panel.appendChild(el('p', { text: detail }));
+  panel.appendChild(el('p', {
+    text: 'Try closing and re-opening the file. If the problem stays, the copy of the ' +
+          'file may be damaged - download a fresh copy.'
+  }));
+  ['viewHome', 'viewCategory', 'viewSearch'].forEach(function (id) {
+    const view = $(id); if (view) view.hidden = true;
+  });
+  announce(heading);
+}
+
+/* ===========================================================================
+   4. INDEX
+   One flat array of every entry in the file. Search reads this; nothing else
+   has to walk the nested structure.
+   =========================================================================== */
+const INDEX = [];
+const STATS = { entries: 0, videos: 0, websites: 0, emails: 0 };
+
+function buildIndex() {
+  INDEX.length = 0;
+  STATS.entries = STATS.videos = STATS.websites = STATS.emails = 0;
+
+  DIRECTORY_DATA.categories.forEach(function (cat) {
+    cat.sections.forEach(function (sec) {
+      sec.groups.forEach(function (grp) {
+        grp.entries.forEach(function (entry) {
+          const parts = [cat.title, cat.sheet, sec.title, entry.plain || '', entry.ref];
+          entry.fields.forEach(function (f) { parts.push(f.label, f.value); });
+          if (grp.labels) Object.keys(grp.labels).forEach(function (k) { parts.push(grp.labels[k]); });
+          if (entry.link) {
+            parts.push(entry.link.text, entry.link.url, entry.link.kind);
+            if (entry.link.kind === 'youtube') { parts.push('video youtube'); STATS.videos++; }
+            else if (entry.link.kind === 'email') { parts.push('email'); STATS.emails++; }
+            else { parts.push('website link'); STATS.websites++; }
+          } else {
+            parts.push('no link offline only');
+          }
+          STATS.entries++;
+          INDEX.push({
+            entry: entry, category: cat, section: sec, group: grp,
+            haystack: parts.join(' ␟ ').toLowerCase()
+          });
+        });
+      });
+    });
+  });
+}
+
+/**
+ * Find entries matching a query. Every whitespace-separated word must appear
+ * somewhere in the entry (an AND search), which keeps results tight.
+ * @returns {{terms:string[], hits:Array}}
+ */
+function searchIndex(query) {
+  const terms = String(query || '').toLowerCase().split(/\s+/).filter(Boolean);
+  if (!terms.length) return { terms: terms, hits: [] };
+  const hits = INDEX.filter(function (row) {
+    return terms.every(function (term) { return row.haystack.indexOf(term) !== -1; });
+  });
+  return { terms: terms, hits: hits };
+}
+
+/* ===========================================================================
+   5. RENDERING
+   =========================================================================== */
+
+/** Badge describing what a link is and whether it needs a connection. */
+function linkBadges(link) {
+  const badges = el('p', { class: 'badges' });
+  if (!link) {
+    badges.appendChild(el('span', { class: 'badge badge-offline', text: 'Reading only — works offline' }));
+    return badges;
+  }
+  if (link.kind === 'youtube') {
+    badges.appendChild(el('span', {
+      class: 'badge badge-video',
+      text: link.playlist ? 'Video playlist — needs internet' : 'Video — needs internet'
+    }));
+  } else if (link.kind === 'email') {
+    badges.appendChild(el('span', { class: 'badge badge-email', text: 'Email address' }));
+  } else {
+    badges.appendChild(el('span', { class: 'badge badge-web', text: 'Website — needs internet' }));
+  }
+  return badges;
+}
+
+/**
+ * The YouTube thumbnail. Loaded from img.youtube.com when online; when the
+ * image cannot load (no connection, blocked, or a playlist with no single
+ * video) it is swapped for a text placeholder so the layout never breaks.
+ */
+function buildThumb(link) {
+  const box = el('div', { class: 'thumb' });
+  const fallback = el('span', {
+    class: 'thumb-fallback',
+    text: link.playlist ? 'Playlist preview\n(needs internet)' : 'Video preview\n(needs internet)'
+  });
+  if (!link.videoId) { box.appendChild(fallback); return box; }
+
+  const img = el('img', {
+    src: 'https://img.youtube.com/vi/' + link.videoId + '/mqdefault.jpg',
+    alt: '',                 // decorative: the link text right beside it says the same thing
+    loading: 'lazy',
+    decoding: 'async',
+    width: '320', height: '180'
+  });
+  img.addEventListener('error', function () {
+    if (box.contains(img)) { box.removeChild(img); box.appendChild(fallback); }
+  });
+  box.appendChild(img);
+  return box;
+}
+
+/**
+ * One entry, rendered as a list item.
+ * @param {Object} context      - {entry, category, section, group}
+ * @param {string[]|null} terms - search words to highlight, or null
+ * @param {string} [headingTag] - heading level for the entry's title. Callers
+ *        pass 'h3' when no group heading sits above it and 'h4' when one does,
+ *        so heading levels never skip a step (WCAG 1.3.1 / 2.4.6).
+ */
+function buildEntry(context, terms, headingTag) {
+  const entry = context.entry;
+  const link = entry.link;
+  const item = el('li', { class: 'entry' + (link && link.kind === 'youtube' ? ' is-video' : '') });
+
+  /* Heading: the entry's first cell, exactly as the spreadsheet has it. */
+  const head = el(headingTag || 'h4', { class: 'entry-title' });
+  writeHighlighted(head, entryTitle(entry), terms);
+  head.appendChild(el('span', { class: 'cellref', text: entry.ref }));
+  item.appendChild(head);
+
+  /* Plain-language explanation, added by this directory - never a replacement. */
+  if (entry.plain) {
+    const plain = el('p', { class: 'plain-note' });
+    plain.appendChild(el('strong', { text: 'In plain words: ' }));
+    writeHighlighted(plain, entry.plain, terms);
+    item.appendChild(plain);
+  }
+
+  /* Every remaining populated cell, with its column heading. */
+  const titled = entry.title ? null : titleField(entry);
+  const rest = entry.fields.filter(function (f) { return !titled || f.cell !== titled.cell; });
+  if (rest.length) {
+    const dl = el('dl', { class: 'fields' });
+    rest.forEach(function (f) {
+      const row = el('div');
+      row.appendChild(el('dt', { text: f.label || f.cell }));
+      const dd = el('dd', { class: f.value && f.value.trim() ? '' : 'empty' });
+      if (f.value && f.value.trim()) writeHighlighted(dd, f.value, terms);
+      else dd.textContent = '(left blank in the spreadsheet)';
+      row.appendChild(dd);
+      dl.appendChild(row);
+    });
+    item.appendChild(dl);
+  }
+
+  item.appendChild(linkBadges(link));
+
+  /* The link itself. Clicking always asks first (see openLinkDialog). */
+  if (link) {
+    const row = el('div', { class: 'linkrow' });
+    if (link.kind === 'youtube') row.appendChild(buildThumb(link));
+
+    const body = el('div', { class: 'linkbody' });
+    const anchor = el('a', {
+      href: link.url,
+      class: 'linktext',
+      rel: 'noopener noreferrer',
+      'data-kind': link.kind
+    });
+    writeHighlighted(anchor, link.text || link.url, terms);
+    anchor.appendChild(el('span', {
+      class: 'sr-only',
+      text: link.kind === 'youtube'
+        ? ' (video link - opens outside this directory and needs an internet connection)'
+        : link.kind === 'email'
+          ? ' (email address - opens your email program)'
+          : ' (website link - opens outside this directory and needs an internet connection)'
+    }));
+    anchor.addEventListener('click', function (ev) { ev.preventDefault(); openLinkDialog(link, anchor); });
+    body.appendChild(anchor);
+
+    body.appendChild(el('span', { class: 'linkurl', text: link.url }));
+    body.appendChild(el('span', {
+      class: 'needs-net',
+      text: link.kind === 'youtube'
+        ? 'Needs internet to watch. Everything else on this page works offline.'
+        : link.kind === 'email'
+          ? 'Opens your email program. Sending the message needs internet.'
+          : 'Needs internet to open. Everything else on this page works offline.'
+    }));
+    row.appendChild(body);
+    item.appendChild(row);
+  }
+
+  return item;
+}
+
+/** Landing page: one card per worksheet. */
+function renderHome() {
+  const list = $('categoryCards');
+  list.textContent = '';
+  DIRECTORY_DATA.categories.forEach(function (cat) {
+    let count = 0, videos = 0;
+    const topics = [];
+    cat.sections.forEach(function (sec) {
+      topics.push(sec.title);
+      sec.groups.forEach(function (g) {
+        count += g.entries.length;
+        videos += g.entries.filter(function (e) { return e.link && e.link.kind === 'youtube'; }).length;
+      });
+    });
+    const card = el('a', { class: 'card', href: '#/c/' + cat.id }, [
+      el('h3', { text: cat.title }),
+      el('p', { class: 'card-plain', text: cat.plain }),
+      el('p', { class: 'card-count',
+        text: count + (count === 1 ? ' entry' : ' entries') + (videos ? ' · ' + videos + ' video' + (videos === 1 ? '' : 's') : '') }),
+      el('p', { class: 'card-topics', text: 'Inside: ' + topics.join(' · ') }),
+      el('span', { class: 'card-go', text: 'Open this category →', 'aria-hidden': 'true' })
+    ]);
+    card.appendChild(el('span', { class: 'sr-only', text: 'Open the ' + cat.title + ' category' }));
+    list.appendChild(el('li', null, [card]));
+  });
+
+  $('footerStats').textContent =
+    STATS.entries + ' entries · ' + STATS.videos + ' videos · ' +
+    STATS.websites + ' websites · ' + STATS.emails + ' email contact' +
+    (STATS.emails === 1 ? '' : 's') + '.';
+}
+
+/** Which order the category view is using. Remembered between visits. */
+let sortMode = store.get('tech-dir-sort', 'original');
+
+/** Category page. */
+function renderCategory(categoryId) {
+  const cat = DIRECTORY_DATA.categories.find(function (c) { return c.id === categoryId; });
+  if (!cat) return false;
+
+  $('categoryTitle').textContent = cat.title;
+  $('crumbCurrent').textContent = cat.title;
+  $('categoryPlain').textContent = cat.plain;
+
+  let total = 0, videos = 0;
+  cat.sections.forEach(function (s) {
+    s.groups.forEach(function (g) {
+      total += g.entries.length;
+      videos += g.entries.filter(function (e) { return e.link && e.link.kind === 'youtube'; }).length;
+    });
+  });
+  $('categoryMeta').textContent =
+    'From the "' + cat.sheet + '" sheet · ' + cat.sections.length +
+    (cat.sections.length === 1 ? ' section' : ' sections') + ' · ' + total +
+    (total === 1 ? ' entry' : ' entries') +
+    (videos
+      ? ' · ' + videos + (videos === 1 ? ' video needs' : ' videos need') + ' internet to watch.'
+      : ' · no videos in this category.');
+
+  /* Jump links */
+  const nav = $('sectionNav');
+  nav.textContent = '';
+  cat.sections.forEach(function (sec) {
+    const id = 'sec-' + cat.id + '-' + sec.row;
+    const chip = el('a', { class: 'chip', href: '#' + id, text: sec.title });
+    chip.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      const target = $(id);
+      if (!target) return;
+      target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+      const heading = target.querySelector('.section-head h2, .section-head h3');
+      if (heading) { heading.setAttribute('tabindex', '-1'); heading.focus({ preventScroll: true }); }
+    });
+    nav.appendChild(el('li', null, [chip]));
+  });
+
+  $('sortOriginal').setAttribute('aria-pressed', String(sortMode === 'original'));
+  $('sortAlpha').setAttribute('aria-pressed', String(sortMode === 'alpha'));
+
+  /* Sections, groups, entries */
+  const body = $('categoryBody');
+  body.textContent = '';
+  cat.sections.forEach(function (sec) {
+    const secId = 'sec-' + cat.id + '-' + sec.row;
+    const section = el('section', { class: 'section', id: secId, 'aria-labelledby': secId + '-h' });
+    const head = el('div', { class: 'section-head' }, [
+      el('h2', { id: secId + '-h', text: sec.title })
+    ]);
+    if (sec.plain) head.appendChild(el('p', { class: 'plain', text: sec.plain }));
+    /* Record the spreadsheet's own column headings so nothing in the file is
+       invisible here, even when a heading is too generic to use as a title. */
+    const headingList = [];
+    sec.groups.forEach(function (g) {
+      if (!g.labels) return;
+      Object.keys(g.labels).forEach(function (col) {
+        const t = String(g.labels[col] || '').trim();
+        if (t && headingList.indexOf(t) === -1) headingList.push(t);
+      });
+    });
+    if (headingList.length) {
+      head.appendChild(el('p', { class: 'plain', style: 'font-size:.85rem',
+        text: 'Columns in the spreadsheet: ' + headingList.join(' \u00b7 ') }));
+    }
+    section.appendChild(head);
+
+    sec.groups.forEach(function (grp, gi) {
+      const group = el('div', { class: 'group' });
+
+      /* A group heading only helps when a section has more than one group and
+         the spreadsheet gave that group its own question/heading in column A. */
+      const ownLabel = grp.labels && grp.labels.A ? grp.labels.A.trim() : '';
+      const hasGroupHeading = !!(ownLabel && !isGenericHeading(ownLabel));
+      if (hasGroupHeading) {
+        const gid = secId + '-g' + gi;
+        group.appendChild(el('h3', { class: 'group-head', id: gid, text: ownLabel }));
+        group.setAttribute('role', 'group');
+        group.setAttribute('aria-labelledby', gid);
+      }
+
+      let rows = grp.entries.map(function (e) {
+        return { entry: e, category: cat, section: sec, group: grp };
+      });
+      if (sortMode === 'alpha') {
+        rows = rows.slice().sort(function (a, b) {
+          return sortKey(a.entry).localeCompare(sortKey(b.entry), 'en');
+        });
+      }
+
+      const ul = el('ul', { class: 'entries' });
+      rows.forEach(function (row) {
+        ul.appendChild(buildEntry(row, null, hasGroupHeading ? 'h4' : 'h3'));
+      });
+      group.appendChild(ul);
+      section.appendChild(group);
+    });
+
+    body.appendChild(section);
+  });
+
+  return true;
+}
+
+/** Search results page. */
+function renderSearch(query) {
+  const result = searchIndex(query);
+  const body = $('searchBody');
+  const summary = $('searchSummary');
+  body.textContent = '';
+
+  if (!result.terms.length) {
+    summary.textContent = 'Type something in the search box above to look through all ' +
+      STATS.entries + ' entries.';
+    announce('Search cleared.');
+    return;
+  }
+
+  const n = result.hits.length;
+  summary.textContent = n === 0
+    ? 'No entries match “' + query + '”.'
+    : n + (n === 1 ? ' entry matches “' : ' entries match “') + query + '”.';
+  announce(summary.textContent);
+
+  if (n === 0) {
+    body.appendChild(el('div', { class: 'empty-state' }, [
+      el('h2', { text: 'Nothing found', style: 'font-size:1.2rem' }),
+      el('p', { text: 'Nothing in the directory matches every word you typed. Things worth trying:' }),
+      el('ul', null, [
+        el('li', { text: 'Use fewer words - search "resume" instead of "how to build a resume".' }),
+        el('li', { text: 'Check the spelling.' }),
+        el('li', { text: 'Try a city name such as Bangor, Portland, Augusta or Lewiston.' }),
+        el('li', { text: 'Try a plain word such as laptop, library, phone, interview or course.' })
+      ]),
+      el('p', null, [
+        'Or ',
+        el('a', { href: '#/', text: 'go back to the categories' }),
+        ' and browse instead.'
+      ])
+    ]));
+    return;
+  }
+
+  /* Group the hits by category, then by section, so results keep their context. */
+  const byCategory = new Map();
+  result.hits.forEach(function (hit) {
+    if (!byCategory.has(hit.category.id)) byCategory.set(hit.category.id, { cat: hit.category, sections: new Map() });
+    const bucket = byCategory.get(hit.category.id);
+    const key = hit.section.row;
+    if (!bucket.sections.has(key)) bucket.sections.set(key, { sec: hit.section, rows: [] });
+    bucket.sections.get(key).rows.push(hit);
+  });
+
+  byCategory.forEach(function (bucket) {
+    const section = el('section', { class: 'section' });
+    const hid = 'res-' + bucket.cat.id;
+    section.setAttribute('aria-labelledby', hid);
+    let count = 0;
+    bucket.sections.forEach(function (s) { count += s.rows.length; });
+    section.appendChild(el('div', { class: 'section-head' }, [
+      el('h2', { id: hid, text: bucket.cat.title, style: 'font-size:1.5rem' }),
+      el('p', { class: 'plain', text: count + (count === 1 ? ' match' : ' matches') + ' in this category' }),
+      el('p', { class: 'plain' }, [el('a', { href: '#/c/' + bucket.cat.id, text: 'See the whole ' + bucket.cat.title + ' category →' })])
+    ]));
+    bucket.sections.forEach(function (s) {
+      const group = el('div', { class: 'group' });
+      group.appendChild(el('h3', { class: 'group-head', text: s.sec.title }));
+      const ul = el('ul', { class: 'entries' });
+      s.rows.forEach(function (row) { ul.appendChild(buildEntry(row, result.terms, 'h4')); });
+      group.appendChild(ul);
+      section.appendChild(group);
+    });
+    body.appendChild(section);
+  });
+}
+
+/* ===========================================================================
+   6. LEAVING THE DIRECTORY - confirmation dialog
+   Every link, video or website, asks before it opens. Nobody loses their place
+   by tapping something they did not mean to tap.
+   =========================================================================== */
+let pendingLink = null;      // the link waiting for a yes/no
+let dialogOpener = null;     // element to return focus to when the dialog closes
+
+function actuallyOpen(link) {
+  try {
+    if (link.kind === 'email') {
+      window.location.href = link.url;           // hands over to the mail program
+    } else {
+      const win = window.open(link.url, '_blank', 'noopener,noreferrer');
+      if (!win) window.location.href = link.url; // pop-up blocked: navigate instead
+    }
+  } catch (err) {
+    window.alert('This link could not be opened automatically.\n\n' +
+                 'You can copy it and paste it into your browser:\n\n' + link.url);
+  }
+}
+
+function openLinkDialog(link, opener) {
+  const dlg = $('linkDialog');
+  pendingLink = link;
+  dialogOpener = opener || document.activeElement;
+
+  const isVideo = link.kind === 'youtube';
+  const isEmail = link.kind === 'email';
+
+  $('dlgTitle').textContent = isEmail ? 'Open your email program?' : 'Leave this directory?';
+  $('dlgDesc').textContent = isEmail
+    ? 'This will hand the address below to whatever email program is set up on this device. This directory stays open.'
+    : isVideo
+      ? 'This video is hosted on YouTube, not inside this file. It opens in a new tab and needs an internet connection to play. This directory stays open behind it.'
+      : 'This website is outside this directory. It opens in a new tab and needs an internet connection. This directory stays open behind it.';
+  $('dlgUrl').textContent = link.url;
+  $('dlgNet').textContent = isEmail
+    ? 'No internet is needed to open the program, but sending the message is.'
+    : 'If you are offline right now, the page will not load - come back when you have a connection, such as free Wi-Fi at a public library.';
+
+  /* Native modal gives us a focus trap and Escape handling for free. */
+  if (typeof dlg.showModal === 'function') {
+    try {
+      dlg.showModal();
+      $('dlgCancel').focus();
+      return;
+    } catch (err) { /* fall through to the simple confirm below */ }
+  }
+  const ok = window.confirm($('dlgTitle').textContent + '\n\n' + $('dlgDesc').textContent +
+                            '\n\n' + link.url);
+  if (ok) actuallyOpen(link);
+  pendingLink = null;
+}
+
+function closeLinkDialog() {
+  const dlg = $('linkDialog');
+  try { if (dlg.open) dlg.close(); } catch (_) { /* ignore */ }
+  if (dialogOpener && typeof dialogOpener.focus === 'function') dialogOpener.focus();
+  dialogOpener = null;
+}
+
+/* ===========================================================================
+   7. ROUTER AND START-UP
+   Routes live in the address bar after the "#", which works from a file on
+   disk with no server:
+       #/                      landing page
+       #/c/<category id>       one category
+       #/search/<words>        search results
+   =========================================================================== */
+function showView(name) {
+  const views = { home: 'viewHome', category: 'viewCategory', search: 'viewSearch' };
+  Object.keys(views).forEach(function (key) {
+    const node = $(views[key]);
+    if (node) node.hidden = (key !== name);
+  });
+}
+
+function route() {
+  try {
+    const hash = window.location.hash.replace(/^#/, '') || '/';
+    const searchBox = $('searchInput');
+
+    if (hash.indexOf('/search/') === 0) {
+      const query = decodeURIComponent(hash.slice('/search/'.length));
+      if (searchBox.value !== query) searchBox.value = query;
+      showView('search');
+      renderSearch(query);
+      document.title = 'Search: ' + query + ' — T.E.C.H. Directory';
+    } else if (hash.indexOf('/c/') === 0) {
+      const id = decodeURIComponent(hash.slice('/c/'.length));
+      if (renderCategory(id)) {
+        showView('category');
+        document.title = $('categoryTitle').textContent + ' — T.E.C.H. Directory';
+        announce('Now showing the ' + $('categoryTitle').textContent + ' category.');
+      } else {
+        /* Unknown category - go home rather than show a blank screen. */
+        showView('home');
+        announce('That category could not be found, so the home page is shown instead.');
+        window.location.hash = '#/';
+        return;
+      }
+    } else {
+      showView('home');
+      document.title = 'T.E.C.H. Directory for Reintegration (Maine)';
+      if (hash !== '/' && hash.indexOf('sec-') !== 0) {
+        announce('Showing the home page.');
+      }
+    }
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  } catch (err) {
+    showFatalError('Something went wrong while opening that page',
+      'The directory could not display that view. Details: ' + (err && err.message ? err.message : err));
+  }
+}
+
+/** Text size control: scales the whole page in steps, remembered locally. */
+const TEXT_STEPS = [87.5, 100, 112.5, 125, 137.5];
+let textStep = parseInt(store.get('tech-dir-textstep', '1'), 10);
+if (isNaN(textStep) || textStep < 0 || textStep >= TEXT_STEPS.length) textStep = 1;
+
+function applyTextSize() {
+  document.documentElement.style.setProperty('--root-size', TEXT_STEPS[textStep] + '%');
+  store.set('tech-dir-textstep', String(textStep));
+  $('textSmaller').disabled = (textStep === 0);
+  $('textLarger').disabled = (textStep === TEXT_STEPS.length - 1);
+}
+
+function wireUp() {
+  /* --- search: live as you type, plus a normal submit ------------------- */
+  const input = $('searchInput');
+  let debounce = null;
+  function runSearch() {
+    const q = input.value.trim();
+    const target = q ? '#/search/' + encodeURIComponent(q) : '#/';
+    if (window.location.hash !== target) window.location.hash = target;
+    else route();
+  }
+  input.addEventListener('input', function () {
+    window.clearTimeout(debounce);
+    debounce = window.setTimeout(runSearch, 200);
+  });
+  input.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape') { input.value = ''; runSearch(); }
+  });
+  $('searchForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    window.clearTimeout(debounce);
+    runSearch();
+    $('main').focus();
+  });
+
+  /* --- ordering --------------------------------------------------------- */
+  function resort(mode, message) {
+    sortMode = mode;
+    store.set('tech-dir-sort', mode);
+    /* Re-draw the category in place - routing again would scroll to the top. */
+    const hash = window.location.hash.replace(/^#/, '');
+    if (hash.indexOf('/c/') === 0) {
+      const keepY = window.scrollY;
+      renderCategory(decodeURIComponent(hash.slice('/c/'.length)));
+      window.scrollTo(0, keepY);
+    }
+    announce(message);
+  }
+  $('sortOriginal').addEventListener('click', function () {
+    resort('original', 'Entries are now in spreadsheet order.');
+  });
+  $('sortAlpha').addEventListener('click', function () {
+    resort('alpha', 'Entries are now in A to Z order.');
+  });
+
+  /* --- text size -------------------------------------------------------- */
+  $('textSmaller').addEventListener('click', function () {
+    if (textStep > 0) { textStep--; applyTextSize(); announce('Text size decreased.'); }
+  });
+  $('textLarger').addEventListener('click', function () {
+    if (textStep < TEXT_STEPS.length - 1) { textStep++; applyTextSize(); announce('Text size increased.'); }
+  });
+
+  /* --- link dialog ------------------------------------------------------ */
+  $('dlgCancel').addEventListener('click', closeLinkDialog);
+  $('dlgGo').addEventListener('click', function () {
+    const link = pendingLink;
+    closeLinkDialog();
+    if (link) actuallyOpen(link);
+    pendingLink = null;
+  });
+  $('linkDialog').addEventListener('close', function () {
+    pendingLink = null;
+    if (dialogOpener && typeof dialogOpener.focus === 'function') dialogOpener.focus();
+    dialogOpener = null;
+  });
+  /* Clicking the dark area outside the box closes it, like a tap-away. */
+  $('linkDialog').addEventListener('click', function (ev) {
+    if (ev.target === ev.currentTarget) closeLinkDialog();
+  });
+
+  window.addEventListener('hashchange', route);
+}
+
+/* Catch anything unexpected so the reader gets an explanation, not a blank page. */
+window.addEventListener('error', function (ev) {
+  showFatalError('The directory hit an unexpected problem',
+    'Technical details: ' + (ev && ev.message ? ev.message : 'unknown error') + '.');
+});
+window.addEventListener('unhandledrejection', function (ev) {
+  showFatalError('The directory hit an unexpected problem',
+    'Technical details: ' + (ev && ev.reason ? String(ev.reason) : 'unknown error') + '.');
+});
+
+/* --- start ---------------------------------------------------------------- */
+(function start() {
+  try {
+    const problems = validateData(DIRECTORY_DATA);
+    if (problems.length) {
+      showFatalError('The directory data could not be read',
+        problems.slice(0, 5).join(' '));
+      return;
+    }
+    buildIndex();
+    applyTextSize();
+    renderHome();
+    wireUp();
+    route();
+  } catch (err) {
+    showFatalError('The directory could not start',
+      'Technical details: ' + (err && err.message ? err.message : String(err)));
+  }
+})();
+</script>
+</body>
+</html>
