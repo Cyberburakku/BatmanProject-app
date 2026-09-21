@@ -70,11 +70,30 @@ npm run build:single # rebuilds the one-file Second-Take-Demo.html
 
 "Reset demo" in the top bar wipes everything back to the starting content.
 
-## How the content is stored
+## Where the lessons and resources come from
 
 All lessons, resources, quiz questions, and interview questions live in one file:
 `src/data/content.json`. That's the file to edit if you want to change the demo's
-starting content.
+starting content. Every link in it was checked against a live web search index on
+**21 September 2026** (`linksCheckedOn` in the file records that date).
+
+The content pulls from four places that publish free, plain-language material:
+
+| Source | What it covers |
+| --- | --- |
+| [CareerOneStop — Justice-Impacted](https://www.careeronestop.org/JusticeImpacted/get-started-guide.aspx) | Reentry job search, resumes, interviews, work-ready checklist. Run by the U.S. Department of Labor. Has its own [video library](https://www.careeronestop.org/JusticeImpacted/Help/videos.aspx). |
+| [GCFGlobal LearnFree](https://edu.gcfglobal.org/en/) | Free self-paced tech lessons: phones, email, passwords, search, online forms. |
+| [DigitalLearn](https://www.digitallearn.org/) | Free beginner computer courses, also used by public libraries in person. |
+| Federal services | [USAGov](https://www.usa.gov/replace-vital-documents) for ID and documents, [Benefits.gov](https://www.benefits.gov/), [HUD Find Shelter](https://www.hud.gov/findshelter), [211](https://www.211.org/), [988](https://988lifeline.org/), [SAMHSA](https://www.samhsa.gov/find-support). |
+
+If you want more lessons, the CareerOneStop Justice-Impacted guide and the
+GCFGlobal library are the two places to pull from. Both are free, need no
+account, and are written in plain language.
+
+**About the flagged entries.** Three entries carry a flag so the Flagged Links
+screen has something to show. They are sample flags for the demo, not dead links
+— the reasons say "Needs staff review", "Newer version available", and "Flagged
+by a participant" rather than claiming the link is broken.
 
 When the app runs, it copies that content into **localStorage** (a small storage box
 built into every browser). Admin edits are saved there, so they survive a page

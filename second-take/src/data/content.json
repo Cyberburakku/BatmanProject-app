@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "appName": "Second Take",
   "welcome": {
     "heading": "Welcome to Second Take",
@@ -11,9 +11,21 @@
       "prompt": "How comfortable are you using a smartphone or computer?",
       "helper": "There is no wrong answer. This just helps us pick your starting lesson.",
       "options": [
-        { "value": "new", "label": "I am brand new to it", "category": "Technology" },
-        { "value": "some", "label": "I can do a few basics", "category": "Technology" },
-        { "value": "confident", "label": "I use one comfortably", "category": "Employment" }
+        {
+          "value": "new",
+          "label": "I am brand new to it",
+          "category": "Technology"
+        },
+        {
+          "value": "some",
+          "label": "I can do a few basics",
+          "category": "Technology"
+        },
+        {
+          "value": "confident",
+          "label": "I use one comfortably",
+          "category": "Employment"
+        }
       ]
     },
     {
@@ -21,9 +33,21 @@
       "prompt": "Do you have an email address you can get into today?",
       "helper": "An email address is the key to most job applications and benefits sites.",
       "options": [
-        { "value": "no", "label": "No, I need to set one up", "category": "Technology" },
-        { "value": "locked-out", "label": "I have one but cannot get in", "category": "Technology" },
-        { "value": "yes", "label": "Yes, I can get into it", "category": "Employment" }
+        {
+          "value": "no",
+          "label": "No, I need to set one up",
+          "category": "Technology"
+        },
+        {
+          "value": "locked-out",
+          "label": "I have one but cannot get in",
+          "category": "Technology"
+        },
+        {
+          "value": "yes",
+          "label": "Yes, I can get into it",
+          "category": "Employment"
+        }
       ]
     },
     {
@@ -31,9 +55,21 @@
       "prompt": "When did you last hold a paid job?",
       "helper": "Work history helps us decide how much resume support to show you.",
       "options": [
-        { "value": "never", "label": "I have not worked for pay before", "category": "Employment" },
-        { "value": "long-ago", "label": "More than five years ago", "category": "Employment" },
-        { "value": "recent", "label": "Within the last five years", "category": "Employment" }
+        {
+          "value": "never",
+          "label": "I have not worked for pay before",
+          "category": "Employment"
+        },
+        {
+          "value": "long-ago",
+          "label": "More than five years ago",
+          "category": "Employment"
+        },
+        {
+          "value": "recent",
+          "label": "Within the last five years",
+          "category": "Employment"
+        }
       ]
     },
     {
@@ -41,9 +77,21 @@
       "prompt": "What would help you most in your first month out?",
       "helper": "Pick the one that feels most urgent right now.",
       "options": [
-        { "value": "id-docs", "label": "Getting my ID and paperwork sorted", "category": "Connections" },
-        { "value": "work", "label": "Finding steady work", "category": "Employment" },
-        { "value": "people", "label": "Rebuilding family and support ties", "category": "Connections" }
+        {
+          "value": "id-docs",
+          "label": "Getting my ID and paperwork sorted",
+          "category": "Connections"
+        },
+        {
+          "value": "work",
+          "label": "Finding steady work",
+          "category": "Employment"
+        },
+        {
+          "value": "people",
+          "label": "Rebuilding family and support ties",
+          "category": "Connections"
+        }
       ]
     },
     {
@@ -51,9 +99,21 @@
       "prompt": "Who can you call when a day goes sideways?",
       "helper": "Knowing your support list ahead of time takes pressure off later.",
       "options": [
-        { "value": "nobody", "label": "I am not sure yet", "category": "Connections" },
-        { "value": "one", "label": "One person comes to mind", "category": "Connections" },
-        { "value": "several", "label": "I have a few people", "category": "Employment" }
+        {
+          "value": "nobody",
+          "label": "I am not sure yet",
+          "category": "Connections"
+        },
+        {
+          "value": "one",
+          "label": "One person comes to mind",
+          "category": "Connections"
+        },
+        {
+          "value": "several",
+          "label": "I have a few people",
+          "category": "Employment"
+        }
       ]
     }
   ],
@@ -119,7 +179,7 @@
       "type": "lesson",
       "title": "Turning on a smartphone and finding your way around",
       "description": "The power button, the home screen, and how to open and close an app without getting lost.",
-      "link": "https://edu.gcfglobal.org/en/mobile-device-basics/",
+      "link": "https://edu.gcfglobal.org/en/computerbasics/mobile-devices/1/",
       "category": "Technology",
       "subcategory": "Device Basics",
       "order": 1,
@@ -130,8 +190,8 @@
       "id": "tech-02",
       "type": "lesson",
       "title": "Setting up a free email address",
-      "description": "Step by step walkthrough of creating an email account and writing down your password somewhere safe.",
-      "link": "https://edu.gcfglobal.org/en/gmail/",
+      "description": "A step by step walkthrough of creating an email account and writing your password down somewhere safe.",
+      "link": "https://edu.gcfglobal.org/en/gmail/setting-up-a-gmail-account/1/",
       "category": "Technology",
       "subcategory": "Email",
       "order": 2,
@@ -143,19 +203,19 @@
       "type": "lesson",
       "title": "Passwords that you can actually remember",
       "description": "How to build a strong password, why you should not reuse one, and what to do when you get locked out.",
-      "link": "https://edu.gcfglobal.org/en/internetsafety/creating-strong-passwords/1/",
+      "link": "https://edu.gcfglobal.org/en/internetsafety/creating-strong-passwords/full/",
       "category": "Technology",
       "subcategory": "Online Safety",
       "order": 3,
       "flagged": true,
-      "flagReason": "Broken link"
+      "flagReason": "Needs staff review"
     },
     {
       "id": "tech-04",
       "type": "lesson",
       "title": "Searching the internet for what you need",
       "description": "Typing a clear search, reading the results, and spotting an ad versus a real answer.",
-      "link": "https://edu.gcfglobal.org/en/internetbasics/using-search-engines/1/",
+      "link": "https://edu.gcfglobal.org/en/internetbasics/using-search-engines/full",
       "category": "Technology",
       "subcategory": "Device Basics",
       "order": 4,
@@ -165,9 +225,9 @@
     {
       "id": "tech-05",
       "type": "lesson",
-      "title": "Filling out a form online",
-      "description": "Text boxes, drop down menus, checkboxes, and the submit button. Practice before it counts.",
-      "link": "https://edu.gcfglobal.org/en/internetbasics/using-web-forms/1/",
+      "title": "Filling out an application form online",
+      "description": "Text boxes, drop down menus, checkboxes, and the submit button, using a job application as the practice run.",
+      "link": "https://edu.gcfglobal.org/en/jobapplications/completing-a-job-application/full",
       "category": "Technology",
       "subcategory": "Forms and Documents",
       "order": 5,
@@ -177,9 +237,9 @@
     {
       "id": "tech-06",
       "type": "resource",
-      "title": "Free computer classes at your local library",
-      "description": "Most public libraries run free beginner computer sessions and let you use a computer for an hour at a time.",
-      "link": "https://www.usa.gov/libraries-and-archives",
+      "title": "Free computer classes near you",
+      "description": "DigitalLearn runs free beginner courses on computers, email, and getting online. Public libraries use the same lessons in person.",
+      "link": "https://www.digitallearn.org/",
       "category": "Technology",
       "subcategory": "Device Basics",
       "order": 6,
@@ -189,21 +249,33 @@
     {
       "id": "tech-07",
       "type": "resource",
-      "title": "Low cost internet and phone programs",
-      "description": "Programs that lower the monthly cost of internet or a phone plan for people on a tight budget.",
+      "title": "Low cost phone and internet through Lifeline",
+      "description": "Lifeline takes money off your monthly phone or internet bill if you qualify. Note the Affordable Connectivity Program ended in 2024, so Lifeline is the federal program still running.",
       "link": "https://www.fcc.gov/lifeline-consumers",
       "category": "Technology",
       "subcategory": "Online Safety",
       "order": 7,
       "flagged": true,
-      "flagReason": "Outdated content"
+      "flagReason": "Newer version available"
+    },
+    {
+      "id": "tech-08",
+      "type": "resource",
+      "title": "The full free course library",
+      "description": "Hundreds of free, self paced lessons on computers, the internet, money, and work skills. No account needed.",
+      "link": "https://edu.gcfglobal.org/en/",
+      "category": "Technology",
+      "subcategory": "Device Basics",
+      "order": 8,
+      "flagged": false,
+      "flagReason": ""
     },
     {
       "id": "emp-01",
       "type": "lesson",
       "title": "Writing a resume when your history has gaps",
-      "description": "A simple one page layout that leads with your skills instead of your dates.",
-      "link": "https://www.careeronestop.org/JobSearch/Resumes/resume-guide.aspx",
+      "description": "A one page layout that leads with your skills, plus what to do about time you spent away.",
+      "link": "https://www.careeronestop.org/JobSearch/Resumes/ResumeGuide/special-tips.aspx",
       "category": "Employment",
       "subcategory": "Resume",
       "order": 1,
@@ -215,7 +287,7 @@
       "type": "lesson",
       "title": "Talking about your record with confidence",
       "description": "What you have to share, what you do not, and a short script you can practice out loud.",
-      "link": "https://www.careeronestop.org/ExOffender/JobSearch/talk-about-your-record.aspx",
+      "link": "https://blog.careeronestop.org/tips-for-discussing-your-criminal-record-at-a-job-interview/",
       "category": "Employment",
       "subcategory": "Interviewing",
       "order": 2,
@@ -227,7 +299,7 @@
       "type": "lesson",
       "title": "Applying for a job online",
       "description": "Creating an account on a job site, uploading your resume, and keeping track of where you applied.",
-      "link": "https://www.careeronestop.org/JobSearch/job-search.aspx",
+      "link": "https://edu.gcfglobal.org/en/jobsearchandnetworking/find-a-job-online/full",
       "category": "Employment",
       "subcategory": "Job Search",
       "order": 3,
@@ -237,9 +309,9 @@
     {
       "id": "emp-04",
       "type": "lesson",
-      "title": "The first ninety days on a new job",
-      "description": "Showing up, asking questions the right way, and handling your first mistake.",
-      "link": "https://www.careeronestop.org/JobSearch/Network/informational-interviews.aspx",
+      "title": "Getting ready for your first days at work",
+      "description": "A work ready checklist covering what to sort out before day one and how to handle your first mistake.",
+      "link": "https://www.careeronestop.org/JusticeImpacted/FindAJob/WorkChecklist/work-ready-checklist.aspx",
       "category": "Employment",
       "subcategory": "On the Job",
       "order": 4,
@@ -250,7 +322,7 @@
       "id": "emp-05",
       "type": "resource",
       "title": "American Job Centers near you",
-      "description": "Free in person help with resumes, training programs, and local job leads.",
+      "description": "Free in person help with resumes, training programs, and local job leads. Most have computers you can use.",
       "link": "https://www.careeronestop.org/LocalHelp/AmericanJobCenters/find-american-job-centers.aspx",
       "category": "Employment",
       "subcategory": "Job Search",
@@ -262,8 +334,8 @@
       "id": "emp-06",
       "type": "resource",
       "title": "Employers who hire people with records",
-      "description": "A starting list of companies and trades with fair chance hiring practices.",
-      "link": "https://www.careeronestop.org/ExOffender/default.aspx",
+      "description": "Which employers and trades hire justice impacted job seekers, and how to find the openings.",
+      "link": "https://www.careeronestop.org/JusticeImpacted/FindAJob/FindOpenings/who-hires-justice-impacted-job-seekers.aspx",
       "category": "Employment",
       "subcategory": "Job Search",
       "order": 6,
@@ -274,19 +346,55 @@
       "id": "emp-07",
       "type": "resource",
       "title": "Federal Bonding Program",
-      "description": "Free insurance that covers an employer for the first six months, at no cost to you or to them.",
-      "link": "https://bonds4jobs.com/",
+      "description": "Free insurance that covers an employer for the first six months of your job, at no cost to you or to them.",
+      "link": "https://www.dol.gov/agencies/eta/federal-bonding-program",
       "category": "Employment",
       "subcategory": "On the Job",
       "order": 7,
       "flagged": true,
-      "flagReason": "Video removed"
+      "flagReason": "Flagged by a participant"
+    },
+    {
+      "id": "emp-08",
+      "type": "resource",
+      "title": "Common interview questions to practice",
+      "description": "The questions employers ask most, with guidance on answering each one. Pairs with the Interview Practice tool in this app.",
+      "link": "https://www.careeronestop.org/JobSearch/Interview/common-interview-questions.aspx",
+      "category": "Employment",
+      "subcategory": "Interviewing",
+      "order": 8,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "emp-09",
+      "type": "resource",
+      "title": "Reentry video library",
+      "description": "Short videos from CareerOneStop covering job search, interviews, and starting work after incarceration.",
+      "link": "https://www.careeronestop.org/JusticeImpacted/Help/videos.aspx",
+      "category": "Employment",
+      "subcategory": "Job Search",
+      "order": 9,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "emp-10",
+      "type": "resource",
+      "title": "Reentry get started guide",
+      "description": "The full CareerOneStop guide for justice impacted job seekers, start to finish, in one place.",
+      "link": "https://www.careeronestop.org/JusticeImpacted/get-started-guide.aspx",
+      "category": "Employment",
+      "subcategory": "Job Search",
+      "order": 10,
+      "flagged": false,
+      "flagReason": ""
     },
     {
       "id": "conn-01",
       "type": "lesson",
       "title": "Getting your ID and birth certificate",
-      "description": "What documents you need, where to request them, and how long each one usually takes.",
+      "description": "What documents you need, where to request them, and roughly how long each one takes.",
       "link": "https://www.usa.gov/replace-vital-documents",
       "category": "Connections",
       "subcategory": "Documents and ID",
@@ -299,7 +407,7 @@
       "type": "lesson",
       "title": "Rebuilding trust with family",
       "description": "Small, steady steps that work better than one big conversation, plus how to handle a hard no.",
-      "link": "https://www.samhsa.gov/families",
+      "link": "https://www.samhsa.gov/mental-health/children-and-families/coping-resources",
       "category": "Connections",
       "subcategory": "Family",
       "order": 2,
@@ -311,7 +419,7 @@
       "type": "lesson",
       "title": "Building a support list before you need it",
       "description": "Naming five people or places you can reach out to, and writing the numbers down on paper.",
-      "link": "https://www.samhsa.gov/find-help/recovery",
+      "link": "https://www.samhsa.gov/find-support",
       "category": "Connections",
       "subcategory": "Support Network",
       "order": 3,
@@ -358,13 +466,38 @@
       "id": "conn-07",
       "type": "resource",
       "title": "Housing help after release",
-      "description": "Transitional housing, rental assistance, and what to do if you have nowhere to go on day one.",
+      "description": "HUD's shelter finder covers housing, health care, and clothing. Dial 211 and press 6 if you have nowhere to go on day one.",
       "link": "https://www.hud.gov/findshelter",
       "category": "Connections",
       "subcategory": "Housing",
       "order": 7,
       "flagged": false,
       "flagReason": ""
+    },
+    {
+      "id": "conn-08",
+      "type": "resource",
+      "title": "Reentry programs near you",
+      "description": "Local programs built for people coming home, covering job search, housing, and other needs.",
+      "link": "https://www.careeronestop.org/LocalHelp/EmploymentAndTraining/find-reentry-programs.aspx",
+      "category": "Connections",
+      "subcategory": "Support Network",
+      "order": 8,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "conn-09",
+      "type": "resource",
+      "title": "National Reentry Resource Center",
+      "description": "The national hub for reentry information, including record clearing and what a conviction affects.",
+      "link": "https://nationalreentryresourcecenter.org/",
+      "category": "Connections",
+      "subcategory": "Documents and ID",
+      "order": 9,
+      "flagged": false,
+      "flagReason": ""
     }
-  ]
+  ],
+  "linksCheckedOn": "2026-09-21"
 }
