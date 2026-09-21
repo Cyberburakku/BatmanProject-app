@@ -1,0 +1,370 @@
+{
+  "version": 1,
+  "appName": "Second Take",
+  "welcome": {
+    "heading": "Welcome to Second Take",
+    "body": "This is your space to build the everyday skills that make the first months after release easier. Go at your own pace. Nothing here is graded, and nothing you type leaves this device."
+  },
+  "quizQuestions": [
+    {
+      "id": "q-tech-comfort",
+      "prompt": "How comfortable are you using a smartphone or computer?",
+      "helper": "There is no wrong answer. This just helps us pick your starting lesson.",
+      "options": [
+        { "value": "new", "label": "I am brand new to it", "category": "Technology" },
+        { "value": "some", "label": "I can do a few basics", "category": "Technology" },
+        { "value": "confident", "label": "I use one comfortably", "category": "Employment" }
+      ]
+    },
+    {
+      "id": "q-email",
+      "prompt": "Do you have an email address you can get into today?",
+      "helper": "An email address is the key to most job applications and benefits sites.",
+      "options": [
+        { "value": "no", "label": "No, I need to set one up", "category": "Technology" },
+        { "value": "locked-out", "label": "I have one but cannot get in", "category": "Technology" },
+        { "value": "yes", "label": "Yes, I can get into it", "category": "Employment" }
+      ]
+    },
+    {
+      "id": "q-work-history",
+      "prompt": "When did you last hold a paid job?",
+      "helper": "Work history helps us decide how much resume support to show you.",
+      "options": [
+        { "value": "never", "label": "I have not worked for pay before", "category": "Employment" },
+        { "value": "long-ago", "label": "More than five years ago", "category": "Employment" },
+        { "value": "recent", "label": "Within the last five years", "category": "Employment" }
+      ]
+    },
+    {
+      "id": "q-need",
+      "prompt": "What would help you most in your first month out?",
+      "helper": "Pick the one that feels most urgent right now.",
+      "options": [
+        { "value": "id-docs", "label": "Getting my ID and paperwork sorted", "category": "Connections" },
+        { "value": "work", "label": "Finding steady work", "category": "Employment" },
+        { "value": "people", "label": "Rebuilding family and support ties", "category": "Connections" }
+      ]
+    },
+    {
+      "id": "q-support",
+      "prompt": "Who can you call when a day goes sideways?",
+      "helper": "Knowing your support list ahead of time takes pressure off later.",
+      "options": [
+        { "value": "nobody", "label": "I am not sure yet", "category": "Connections" },
+        { "value": "one", "label": "One person comes to mind", "category": "Connections" },
+        { "value": "several", "label": "I have a few people", "category": "Employment" }
+      ]
+    }
+  ],
+  "interviewQuestions": [
+    {
+      "id": "iq-1",
+      "question": "Tell me a little about yourself.",
+      "tip": "Keep it to about a minute. Where you are from, what you are good at, and what kind of work you want next.",
+      "sampleAnswers": [
+        "I am someone who shows up early and finishes what I start. I spent the last few years learning kitchen work and I am looking for a steady role where I can keep building on that.",
+        "I like hands-on work. I picked up maintenance and repair skills, and I am looking for a place where I can learn the rest on the job."
+      ]
+    },
+    {
+      "id": "iq-2",
+      "question": "Why should we hire you for this role?",
+      "tip": "Name one or two strengths and tie each to something the job actually needs.",
+      "sampleAnswers": [
+        "I am reliable and I take direction well. This job needs someone who can be counted on for every shift, and that is the part I am proudest of.",
+        "I work well with a crew. I have spent years in situations where getting along with people mattered, so I do not bring drama to a team."
+      ]
+    },
+    {
+      "id": "iq-3",
+      "question": "I see a gap in your work history. Can you tell me about it?",
+      "tip": "Be brief and honest, then turn it forward to what you did with that time. You do not owe anyone the full story.",
+      "sampleAnswers": [
+        "I was incarcerated. I used that time to finish my GED and complete a food handling certificate, and I am ready to get back to work.",
+        "I had a period away. I took classes and worked in the facility kitchen the whole time, and my references can speak to how I showed up."
+      ]
+    },
+    {
+      "id": "iq-4",
+      "question": "Tell me about a time you handled a difficult situation at work.",
+      "tip": "Use three steps: what happened, what you did, how it turned out.",
+      "sampleAnswers": [
+        "A coworker and I disagreed about how to close up. I asked the supervisor to settle it instead of arguing on the floor, and we ended up with a written closing list everyone followed.",
+        "We were short staffed on a busy night. I took the extra station without being asked and we got through service without sending anything back."
+      ]
+    },
+    {
+      "id": "iq-5",
+      "question": "What are you hoping to learn in this job?",
+      "tip": "Show you want to grow. Employers like people who plan to stick around.",
+      "sampleAnswers": [
+        "I would like to learn the ordering and inventory side, so over time I can take on more than my own station.",
+        "I want to get certified on the equipment here. If there is a path to a lead role, that is what I am working toward."
+      ]
+    },
+    {
+      "id": "iq-6",
+      "question": "Where do you see yourself in two years?",
+      "tip": "Keep it realistic and tied to this employer. Steady beats flashy.",
+      "sampleAnswers": [
+        "Still here, trained up, and hopefully helping bring new people along.",
+        "In a role with more responsibility. I am not in a rush, I just want to keep moving forward."
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "id": "tech-01",
+      "type": "lesson",
+      "title": "Turning on a smartphone and finding your way around",
+      "description": "The power button, the home screen, and how to open and close an app without getting lost.",
+      "link": "https://edu.gcfglobal.org/en/mobile-device-basics/",
+      "category": "Technology",
+      "subcategory": "Device Basics",
+      "order": 1,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "tech-02",
+      "type": "lesson",
+      "title": "Setting up a free email address",
+      "description": "Step by step walkthrough of creating an email account and writing down your password somewhere safe.",
+      "link": "https://edu.gcfglobal.org/en/gmail/",
+      "category": "Technology",
+      "subcategory": "Email",
+      "order": 2,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "tech-03",
+      "type": "lesson",
+      "title": "Passwords that you can actually remember",
+      "description": "How to build a strong password, why you should not reuse one, and what to do when you get locked out.",
+      "link": "https://edu.gcfglobal.org/en/internetsafety/creating-strong-passwords/1/",
+      "category": "Technology",
+      "subcategory": "Online Safety",
+      "order": 3,
+      "flagged": true,
+      "flagReason": "Broken link"
+    },
+    {
+      "id": "tech-04",
+      "type": "lesson",
+      "title": "Searching the internet for what you need",
+      "description": "Typing a clear search, reading the results, and spotting an ad versus a real answer.",
+      "link": "https://edu.gcfglobal.org/en/internetbasics/using-search-engines/1/",
+      "category": "Technology",
+      "subcategory": "Device Basics",
+      "order": 4,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "tech-05",
+      "type": "lesson",
+      "title": "Filling out a form online",
+      "description": "Text boxes, drop down menus, checkboxes, and the submit button. Practice before it counts.",
+      "link": "https://edu.gcfglobal.org/en/internetbasics/using-web-forms/1/",
+      "category": "Technology",
+      "subcategory": "Forms and Documents",
+      "order": 5,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "tech-06",
+      "type": "resource",
+      "title": "Free computer classes at your local library",
+      "description": "Most public libraries run free beginner computer sessions and let you use a computer for an hour at a time.",
+      "link": "https://www.usa.gov/libraries-and-archives",
+      "category": "Technology",
+      "subcategory": "Device Basics",
+      "order": 6,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "tech-07",
+      "type": "resource",
+      "title": "Low cost internet and phone programs",
+      "description": "Programs that lower the monthly cost of internet or a phone plan for people on a tight budget.",
+      "link": "https://www.fcc.gov/lifeline-consumers",
+      "category": "Technology",
+      "subcategory": "Online Safety",
+      "order": 7,
+      "flagged": true,
+      "flagReason": "Outdated content"
+    },
+    {
+      "id": "emp-01",
+      "type": "lesson",
+      "title": "Writing a resume when your history has gaps",
+      "description": "A simple one page layout that leads with your skills instead of your dates.",
+      "link": "https://www.careeronestop.org/JobSearch/Resumes/resume-guide.aspx",
+      "category": "Employment",
+      "subcategory": "Resume",
+      "order": 1,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "emp-02",
+      "type": "lesson",
+      "title": "Talking about your record with confidence",
+      "description": "What you have to share, what you do not, and a short script you can practice out loud.",
+      "link": "https://www.careeronestop.org/ExOffender/JobSearch/talk-about-your-record.aspx",
+      "category": "Employment",
+      "subcategory": "Interviewing",
+      "order": 2,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "emp-03",
+      "type": "lesson",
+      "title": "Applying for a job online",
+      "description": "Creating an account on a job site, uploading your resume, and keeping track of where you applied.",
+      "link": "https://www.careeronestop.org/JobSearch/job-search.aspx",
+      "category": "Employment",
+      "subcategory": "Job Search",
+      "order": 3,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "emp-04",
+      "type": "lesson",
+      "title": "The first ninety days on a new job",
+      "description": "Showing up, asking questions the right way, and handling your first mistake.",
+      "link": "https://www.careeronestop.org/JobSearch/Network/informational-interviews.aspx",
+      "category": "Employment",
+      "subcategory": "On the Job",
+      "order": 4,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "emp-05",
+      "type": "resource",
+      "title": "American Job Centers near you",
+      "description": "Free in person help with resumes, training programs, and local job leads.",
+      "link": "https://www.careeronestop.org/LocalHelp/AmericanJobCenters/find-american-job-centers.aspx",
+      "category": "Employment",
+      "subcategory": "Job Search",
+      "order": 5,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "emp-06",
+      "type": "resource",
+      "title": "Employers who hire people with records",
+      "description": "A starting list of companies and trades with fair chance hiring practices.",
+      "link": "https://www.careeronestop.org/ExOffender/default.aspx",
+      "category": "Employment",
+      "subcategory": "Job Search",
+      "order": 6,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "emp-07",
+      "type": "resource",
+      "title": "Federal Bonding Program",
+      "description": "Free insurance that covers an employer for the first six months, at no cost to you or to them.",
+      "link": "https://bonds4jobs.com/",
+      "category": "Employment",
+      "subcategory": "On the Job",
+      "order": 7,
+      "flagged": true,
+      "flagReason": "Video removed"
+    },
+    {
+      "id": "conn-01",
+      "type": "lesson",
+      "title": "Getting your ID and birth certificate",
+      "description": "What documents you need, where to request them, and how long each one usually takes.",
+      "link": "https://www.usa.gov/replace-vital-documents",
+      "category": "Connections",
+      "subcategory": "Documents and ID",
+      "order": 1,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "conn-02",
+      "type": "lesson",
+      "title": "Rebuilding trust with family",
+      "description": "Small, steady steps that work better than one big conversation, plus how to handle a hard no.",
+      "link": "https://www.samhsa.gov/families",
+      "category": "Connections",
+      "subcategory": "Family",
+      "order": 2,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "conn-03",
+      "type": "lesson",
+      "title": "Building a support list before you need it",
+      "description": "Naming five people or places you can reach out to, and writing the numbers down on paper.",
+      "link": "https://www.samhsa.gov/find-help/recovery",
+      "category": "Connections",
+      "subcategory": "Support Network",
+      "order": 3,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "conn-04",
+      "type": "resource",
+      "title": "211 community help line",
+      "description": "One phone call connects you to housing, food, transport, and health services in your area.",
+      "link": "https://www.211.org/",
+      "category": "Connections",
+      "subcategory": "Support Network",
+      "order": 4,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "conn-05",
+      "type": "resource",
+      "title": "988 Suicide and Crisis Lifeline",
+      "description": "Free, confidential support any hour of any day. Call or text 988 from any phone.",
+      "link": "https://988lifeline.org/",
+      "category": "Connections",
+      "subcategory": "Crisis Support",
+      "order": 5,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "conn-06",
+      "type": "resource",
+      "title": "Applying for health coverage and food benefits",
+      "description": "Where to start with Medicaid and SNAP, and which documents to bring with you.",
+      "link": "https://www.benefits.gov/",
+      "category": "Connections",
+      "subcategory": "Documents and ID",
+      "order": 6,
+      "flagged": false,
+      "flagReason": ""
+    },
+    {
+      "id": "conn-07",
+      "type": "resource",
+      "title": "Housing help after release",
+      "description": "Transitional housing, rental assistance, and what to do if you have nowhere to go on day one.",
+      "link": "https://www.hud.gov/findshelter",
+      "category": "Connections",
+      "subcategory": "Housing",
+      "order": 7,
+      "flagged": false,
+      "flagReason": ""
+    }
+  ]
+}
