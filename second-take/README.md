@@ -44,14 +44,16 @@ npm run build:single # rebuilds the one-file Second-Take-Demo.html
 - **Homepage** — welcome message, progress snapshot, and buttons into everything else.
 - **Check-In Quiz** — five plain-language questions. Your answers pick a starting
   category, and the learning path reorders itself to match.
-- **Learning Path** — a vertical trail. Finished lessons are green, the one you're
-  on is gold, the rest are gray outlines.
+- **Learning Path** — a vertical trail. Finished lessons are electric blue, the one
+  you're on is gold, the rest are gray outlines.
 - **Resource Directory** — Technology, Employment, and Connections sections with a
   search box and a category filter.
 - **Interview Practice** — common interview questions one at a time. Type your own
   answer or start from an example. Nothing you type leaves the browser.
-- **Crisis support** — a coral bar fixed to the bottom of every screen with tappable
-  988 and 211 numbers.
+- **Crisis support** — a fire orange bar fixed to the bottom of every screen with
+  tappable 988 and 211 numbers.
+- **Dark and light mode** — dark by default; the top bar toggles it and remembers
+  your choice.
 
 **For staff (Admin button in the top bar — no login in this demo)**
 
@@ -61,9 +63,10 @@ npm run build:single # rebuilds the one-file Second-Take-Demo.html
   link, with Edit and Remove on every row and a gold "Add New Resource" button on top.
 - **Edit form** — title, description, link, category, subcategory, and a live preview
   panel showing exactly what participants will see.
-- **Flagged Links** — navy header with a gold count badge, category and reason filters,
-  and coral warning cards with "Replace Link" and "Remove Resource". Replacing a link
-  clears its flag. When nothing is flagged, you get a green checkmark empty state.
+- **Flagged Links** — deep navy header with a gold count badge, category and reason
+  filters, and orange warning cards with "Replace Link" and "Remove Resource".
+  Replacing a link clears its flag. When nothing is flagged, you get a blue
+  checkmark empty state.
 
 "Reset demo" in the top bar wipes everything back to the starting content.
 
@@ -95,15 +98,28 @@ phase once the project moves past the demo.
 
 | Purpose | Colour |
 | --- | --- |
-| Headers, primary buttons | Deep navy `#1B2A4A` |
-| Accents, calls to action | Warm gold `#D4A537` |
-| Backgrounds | Soft off-white `#F7F5F0` |
-| Progress bars, completed states | Grounded green `#4A7C59` |
-| Crisis support only | Coral `#E07A5F` |
+| Brand header and side nav (both themes) | Deep navy `#0A0E1A` |
+| Primary buttons, links, finished lessons | Electric blue `#00A3FF` |
+| Calls to action, the lesson you're on | Gold `#FFD700` |
+| Crisis support only | Fire orange `#FF6B00` |
+| Dark background / light background | `#0A0E1A` / `#EDF2FA` |
+
+These are the Jay Flow values from the repository's `DESIGN.md`.
+
+**Dark and light mode.** Dark is the default. The toggle in the top bar switches
+to light and saves your choice in the browser, so it sticks on your next visit.
+Every colour is a variable defined twice — once on `:root` for dark, once on
+`:root[data-theme="light"]` — so nothing is hardcoded to one theme. Blue, gold,
+and orange are darkened in light mode so text keeps its contrast.
+
+In light mode the header and admin side nav stay deep navy on purpose, so the
+branding reads the same either way.
 
 Clean sans-serif throughout: headers 24–28px bold, body 16–18px regular,
 button text 16px bold. Every screen has at least 24px of padding and every
 button is at least 48px tall.
 
-Note: this project uses its own colour set rather than the Jay Flow palette in
-the repository's `DESIGN.md`, because the Second Take brief specifies one.
+One colour role changed from the original brief: completed lessons and progress
+bars were grounded green, which has no place in this palette. They use electric
+blue now, with gold still marking the lesson you're on, so the three states stay
+easy to tell apart.

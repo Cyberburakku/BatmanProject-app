@@ -82,7 +82,7 @@ export default function AdminDashboard({ state, actions, showToast, go }) {
             <div className="admin__header">
               <h2>Admin Dashboard</h2>
               <div className="spacer" />
-              <span style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)' }}>
+              <span className="admin__note">
                 Demo mode — no login, changes save to this browser only.
               </span>
             </div>
@@ -95,7 +95,7 @@ export default function AdminDashboard({ state, actions, showToast, go }) {
               </div>
               <div className="card">
                 <p className="card__label">Flagged links</p>
-                <p className="card__number" style={{ color: flaggedCount ? 'var(--coral)' : 'var(--green)' }}>
+                <p className="card__number" style={{ color: flaggedCount ? 'var(--orange)' : 'var(--blue)' }}>
                   {flaggedCount}
                 </p>
                 <button
@@ -126,7 +126,7 @@ export default function AdminDashboard({ state, actions, showToast, go }) {
                       key={item.id}
                       style={{ padding: '12px 0', borderBottom: '1px solid var(--line)', fontSize: 16 }}
                     >
-                      <strong style={{ color: 'var(--navy)' }}>{item.time}</strong> · {item.message}
+                      <strong style={{ color: 'var(--heading)' }}>{item.time}</strong> · {item.message}
                     </li>
                   ))}
                 </ul>

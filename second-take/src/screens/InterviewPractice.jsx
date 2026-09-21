@@ -23,7 +23,7 @@ export default function InterviewPractice({ state, saveInterview, go }) {
           const text = state.interviewResponses[item.id]
           return (
             <section key={item.id} className="card stack">
-              <span className="tag tag--navy">Question {index + 1}</span>
+              <span className="tag tag--brand">Question {index + 1}</span>
               <h3>{item.question}</h3>
               {text && text.trim() ? (
                 <p style={{ whiteSpace: 'pre-wrap' }}>{text}</p>
@@ -81,7 +81,7 @@ export default function InterviewPractice({ state, saveInterview, go }) {
         </div>
 
         <div className="stack">
-          <p style={{ fontWeight: 700, color: 'var(--navy)' }}>Need a starting point? Pick one and edit it:</p>
+          <p style={{ fontWeight: 700, color: 'var(--heading)' }}>Need a starting point? Pick one and edit it:</p>
           {question.sampleAnswers.map((sample) => (
             <button
               key={sample}

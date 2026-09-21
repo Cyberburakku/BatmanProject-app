@@ -1,4 +1,4 @@
-// Fixed coral bar that sits on every screen, participant and admin alike.
+// Fixed orange crisis bar that sits on every screen, participant and admin alike.
 export default function CrisisBar() {
   return (
     <div className="crisis-bar" role="complementary" aria-label="Crisis support">

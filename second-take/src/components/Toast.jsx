@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-// Green checkmark toast that fades out on its own after a few seconds.
+// Checkmark toast that fades out on its own after a few seconds.
 export default function Toast({ message, onDone }) {
   const [leaving, setLeaving] = useState(false)
 

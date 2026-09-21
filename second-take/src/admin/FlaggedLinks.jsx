@@ -22,7 +22,7 @@ export default function FlaggedLinks({ entries, onReplace, onRemove }) {
         <h2>Flagged Links</h2>
         <span className="badge-count">{flagged.length} flagged</span>
         <div className="spacer" />
-        <span style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)' }}>
+        <span className="admin__note">
           Flags are set by hand in this demo. Live link checking comes in a later build.
         </span>
       </div>
@@ -69,7 +69,7 @@ export default function FlaggedLinks({ entries, onReplace, onRemove }) {
               <div>
                 <h3>{entry.title}</h3>
                 <div className="row" style={{ gap: 8, marginTop: 6 }}>
-                  <span className="tag tag--coral">{entry.flagReason}</span>
+                  <span className="tag tag--warn">{entry.flagReason}</span>
                   <span className="tag">{entry.category}</span>
                   <span className="tag">{entry.subcategory}</span>
                 </div>
@@ -77,7 +77,7 @@ export default function FlaggedLinks({ entries, onReplace, onRemove }) {
               </div>
               <div className="flag-card__actions">
                 <button type="button" className="btn btn--small" onClick={() => onReplace(entry)}>Replace Link</button>
-                <button type="button" className="btn btn--coral btn--small" onClick={() => onRemove(entry)}>Remove Resource</button>
+                <button type="button" className="btn btn--danger btn--small" onClick={() => onRemove(entry)}>Remove Resource</button>
               </div>
             </article>
           ))}

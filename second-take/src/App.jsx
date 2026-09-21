@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import content from './data/content.json'
 import { blankState, clearState, loadState, logEntry, makeId, saveState } from './lib/storage'
+import { applyTheme, readTheme } from './lib/theme'
 
 import CrisisBar from './components/CrisisBar'
 import Toast from './components/Toast'
@@ -25,12 +26,15 @@ export default function App() {
   const [state, setState] = useState(loadState)
   const [screen, setScreen] = useState('home')
   const [toast, setToast] = useState('')
+  const [theme, setTheme] = useState(readTheme)
 
   // Every change is written straight back to localStorage, so the demo
   // survives a page refresh within the same browser.
   useEffect(() => { saveState(state) }, [state])
 
   useEffect(() => { window.scrollTo(0, 0) }, [screen])
+
+  useEffect(() => { applyTheme(theme) }, [theme])
 
   const showToast = useCallback((message) => setToast(message), [])
 
@@ -182,6 +186,14 @@ export default function App() {
             onClick={() => setScreen(isAdmin ? 'home' : 'admin')}
           >
             {isAdmin ? 'Exit admin' : 'Admin'}
+          </button>
+          <button
+            type="button"
+            className="btn btn--ghost-light btn--small theme-toggle"
+            aria-pressed={theme === 'light'}
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          >
+            {theme === 'dark' ? '☀ Light mode' : '☾ Dark mode'}
           </button>
           <button type="button" className="btn btn--ghost-light btn--small" onClick={resetDemo}>
             Reset demo

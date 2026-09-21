@@ -31,7 +31,7 @@ export default function ContentTable({ title, entries, onEdit, onAdd, onRemove }
                     <strong>{entry.title}</strong>
                     <div style={{ fontSize: 15, color: 'var(--muted)' }}>
                       {entry.subcategory} · {entry.type === 'lesson' ? 'Lesson' : 'Resource'}
-                      {entry.flagged && <span className="tag tag--coral" style={{ marginLeft: 8 }}>{entry.flagReason}</span>}
+                      {entry.flagged && <span className="tag tag--warn" style={{ marginLeft: 8 }}>{entry.flagReason}</span>}
                     </div>
                   </td>
                   <td>{entry.category}</td>
@@ -41,7 +41,7 @@ export default function ContentTable({ title, entries, onEdit, onAdd, onRemove }
                   <td>
                     <div className="row" style={{ gap: 8 }}>
                       <button type="button" className="btn btn--quiet btn--small" onClick={() => onEdit(entry)}>Edit</button>
-                      <button type="button" className="btn btn--coral btn--small" onClick={() => onRemove(entry)}>Remove</button>
+                      <button type="button" className="btn btn--danger btn--small" onClick={() => onRemove(entry)}>Remove</button>
                     </div>
                   </td>
                 </tr>

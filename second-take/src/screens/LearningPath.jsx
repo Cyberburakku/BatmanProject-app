@@ -10,7 +10,7 @@ export default function LearningPath({ state, lessons, toggleLesson, go }) {
       <header className="screen__header">
         <h1>Your Learning Path</h1>
         <p>
-          Green means finished. Gold is the one you are on. Gray is still ahead of you.
+          Blue means finished. Gold is the one you are on. Gray is still ahead of you.
           {state.startingPoint ? ` Your path starts with ${state.startingPoint.category.toLowerCase()} because of your quiz answers.` : ''}
         </p>
       </header>
@@ -42,7 +42,7 @@ export default function LearningPath({ state, lessons, toggleLesson, go }) {
                 <div className="trail__body">
                   <div className="trail__card stack">
                     <div className="row">
-                      <span className={`tag tag--${done ? 'green' : current ? 'gold' : ''}`}>{label}</span>
+                      <span className={`tag tag--${done ? 'blue' : current ? 'gold' : ''}`}>{label}</span>
                       <span className="tag">{lesson.category}</span>
                       <span className="tag">{lesson.subcategory}</span>
                     </div>
@@ -58,7 +58,7 @@ export default function LearningPath({ state, lessons, toggleLesson, go }) {
                       </a>
                       <button
                         type="button"
-                        className={`btn btn--small ${done ? 'btn--quiet' : 'btn--green'}`}
+                        className={`btn btn--small ${done ? 'btn--quiet' : 'btn--blue'}`}
                         onClick={() => toggleLesson(lesson.id)}
                       >
                         {done ? 'Mark as not done' : 'Mark as done'}
