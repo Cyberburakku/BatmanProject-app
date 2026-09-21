@@ -24,7 +24,16 @@
   --crisis-bar: 76px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* Reset margins and padding without touching the root element, so any
+   safe-area padding a host page sets on :root survives. */
+*, *::before, *::after { box-sizing: border-box; }
+
+body, h1, h2, h3, h4, p, figure, blockquote, ul, ol, li, fieldset, legend {
+  margin: 0;
+  padding: 0;
+}
+
+ul, ol { list-style: none; }
 
 html, body, #root { min-height: 100%; }
 
@@ -501,6 +510,7 @@ tbody tr:hover { background: var(--offwhite); }
   background: var(--coral);
   color: var(--white);
   padding: 16px var(--pad);
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   text-align: center;
   font-size: 17px;
   font-weight: 700;

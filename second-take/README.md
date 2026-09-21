@@ -3,7 +3,20 @@
 A working prototype of a reentry coaching app. It runs entirely in the
 browser: no signup, no login, no database, no paid services, no cost.
 
-## Running it on your computer
+## The quickest way to look at it — no install needed
+
+Open **`Second-Take-Demo.html`** (in this folder). Download it, double-click it,
+and it opens in your browser. That one file has the whole app baked inside it:
+no install, no terminal, no internet connection needed.
+
+To download it from GitHub: open the file, click the **Raw** button, then save
+the page (Ctrl+S on Windows, Cmd+S on a Mac).
+
+One small note: opened this way, your progress is remembered by the browser in
+most cases, but Safari can block that for files opened off your own computer.
+If your progress does not stick, open it in Chrome, Edge, or Firefox instead.
+
+## Running it as a live project (only if you want to change the code)
 
 You need Node.js installed (a free tool that runs code on your machine —
 get it at nodejs.org). Then, in a terminal:
@@ -19,8 +32,9 @@ Press `Ctrl + C` in the terminal to stop it.
 To make a version you can put on a website:
 
 ```
-npm run build   # puts a ready-to-host copy in the "dist" folder
-npm run preview # check that built copy before you share it
+npm run build        # puts a ready-to-host copy in the "dist" folder
+npm run preview      # check that built copy before you share it
+npm run build:single # rebuilds the one-file Second-Take-Demo.html
 ```
 
 ## What's in the demo
