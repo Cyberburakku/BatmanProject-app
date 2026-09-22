@@ -1,503 +1,99 @@
 {
-  "version": 2,
-  "appName": "Second Take",
-  "welcome": {
-    "heading": "Welcome to Second Take",
-    "body": "This is your space to build the everyday skills that make the first months after release easier. Go at your own pace. Nothing here is graded, and nothing you type leaves this device."
+  "app_meta": {
+    "mvp_phase": 1,
+    "active_categories": ["Technology", "Connections", "Learning_Path_Modules"],
+    "deferred_categories": ["Employment_Phase2"],
+    "progressive_disclosure": true,
+    "unlock_delay_hours": 24,
+    "normalize_message": "80% of people in this program follow the same path",
+    "certificate_enabled": true,
+    "links_checked_on": "2026-09-22"
   },
-  "quizQuestions": [
-    {
-      "id": "q-tech-comfort",
-      "prompt": "How comfortable are you using a smartphone or computer?",
-      "helper": "There is no wrong answer. This just helps us pick your starting lesson.",
-      "options": [
-        {
-          "value": "new",
-          "label": "I am brand new to it",
-          "category": "Technology"
-        },
-        {
-          "value": "some",
-          "label": "I can do a few basics",
-          "category": "Technology"
-        },
-        {
-          "value": "confident",
-          "label": "I use one comfortably",
-          "category": "Employment"
-        }
+  "Affirmations": [
+    "Every step forward counts, even the small ones.",
+    "You're building something real, one day at a time.",
+    "Your past doesn't get the final word on your future.",
+    "Showing up today is enough.",
+    "You're not starting over. You're starting from experience.",
+    "Progress looks different for everyone, and yours is real.",
+    "You get to write the next chapter.",
+    "One lesson at a time builds a whole new path.",
+    "You're allowed to believe in yourself again.",
+    "This work you're doing now is the foundation.",
+    "You don't have to have it all figured out to keep moving.",
+    "Growth doesn't always feel comfortable, and that's okay.",
+    "The person you're becoming is worth the effort.",
+    "Asking for help is a strength, not a weakness.",
+    "You've already survived hard days. This is one more step.",
+    "Your story isn't finished being written.",
+    "Small wins add up to real change.",
+    "You are more than your worst day.",
+    "Consistency today builds confidence tomorrow.",
+    "You deserve a real chance, and you're building it right now."
+  ],
+  "Technology": {
+    "meta": {
+      "content_type": "ai_generated_text",
+      "note": "All entries render as static markdown lesson content, never as external links."
+    },
+    "Digital_Basics": [
+      {"id": "tech_phone_01", "title": "Setting Up Your Phone", "unlock_day": 1, "icon": "smartphone", "content_ref": "content/technology/tech_phone_01.md"},
+      {"id": "tech_comp_01", "title": "Computer Basics for Absolute Beginners", "unlock_day": 2, "icon": "laptop", "content_ref": "content/technology/tech_comp_01.md"},
+      {"id": "tech_digi_01", "title": "Using Email", "unlock_day": 3, "icon": "mail", "content_ref": "content/technology/tech_digi_01.md"},
+      {"id": "tech_digi_03", "title": "Staying Safe Online", "unlock_day": 4, "icon": "shield", "content_ref": "content/technology/tech_digi_03.md"},
+      {"id": "tech_social_02", "title": "Searching and Applying for Jobs Online", "unlock_day": 5, "icon": "search", "content_ref": "content/technology/tech_social_02.md"}
+    ]
+  },
+  "Learning_Path_Modules": {
+    "Building_Your_Support_Network": {
+      "id": "module_support_network",
+      "title": "Building Your Support Network",
+      "icon": "heart-handshake",
+      "unlock_day_start": 1,
+      "unlock_delay_hours": 24,
+      "certificate_on_completion": true,
+      "trigger_logic": "Support Score of 2 or higher places this module early in the path. A Support Score of 4 or higher places this module first, ahead of all other lessons.",
+      "lessons": [
+        {"id": "support_lesson_01", "title": "Take Stock of Who's Actually There", "type": "interactive_text", "icon": "users", "unlock_day": 1, "content_ref": "Building_Your_Support_Network.md#lesson-1"},
+        {"id": "support_lesson_02", "title": "Finding New Support When Family Isn't There", "type": "resource_list", "icon": "map-pin", "unlock_day": 2, "content_ref": "Building_Your_Support_Network.md#lesson-2", "linked_resources": ["conn_reentry_programs", "conn_faith_groups", "conn_peer_mentors"]},
+        {"id": "support_lesson_03", "title": "How to Reach Out Without Feeling Like a Burden", "type": "interactive_text", "icon": "message-circle", "unlock_day": 3, "content_ref": "Building_Your_Support_Network.md#lesson-3"},
+        {"id": "support_lesson_04", "title": "Building a Backup Plan", "type": "interactive_text", "icon": "shield", "unlock_day": 4, "content_ref": "Building_Your_Support_Network.md#lesson-4"}
       ]
     },
-    {
-      "id": "q-email",
-      "prompt": "Do you have an email address you can get into today?",
-      "helper": "An email address is the key to most job applications and benefits sites.",
-      "options": [
-        {
-          "value": "no",
-          "label": "No, I need to set one up",
-          "category": "Technology"
-        },
-        {
-          "value": "locked-out",
-          "label": "I have one but cannot get in",
-          "category": "Technology"
-        },
-        {
-          "value": "yes",
-          "label": "Yes, I can get into it",
-          "category": "Employment"
-        }
-      ]
-    },
-    {
-      "id": "q-work-history",
-      "prompt": "When did you last hold a paid job?",
-      "helper": "Work history helps us decide how much resume support to show you.",
-      "options": [
-        {
-          "value": "never",
-          "label": "I have not worked for pay before",
-          "category": "Employment"
-        },
-        {
-          "value": "long-ago",
-          "label": "More than five years ago",
-          "category": "Employment"
-        },
-        {
-          "value": "recent",
-          "label": "Within the last five years",
-          "category": "Employment"
-        }
-      ]
-    },
-    {
-      "id": "q-need",
-      "prompt": "What would help you most in your first month out?",
-      "helper": "Pick the one that feels most urgent right now.",
-      "options": [
-        {
-          "value": "id-docs",
-          "label": "Getting my ID and paperwork sorted",
-          "category": "Connections"
-        },
-        {
-          "value": "work",
-          "label": "Finding steady work",
-          "category": "Employment"
-        },
-        {
-          "value": "people",
-          "label": "Rebuilding family and support ties",
-          "category": "Connections"
-        }
-      ]
-    },
-    {
-      "id": "q-support",
-      "prompt": "Who can you call when a day goes sideways?",
-      "helper": "Knowing your support list ahead of time takes pressure off later.",
-      "options": [
-        {
-          "value": "nobody",
-          "label": "I am not sure yet",
-          "category": "Connections"
-        },
-        {
-          "value": "one",
-          "label": "One person comes to mind",
-          "category": "Connections"
-        },
-        {
-          "value": "several",
-          "label": "I have a few people",
-          "category": "Employment"
-        }
+    "Talking_About_Your_Record": {
+      "id": "module_talking_about_record",
+      "title": "Talking About Your Record",
+      "icon": "mic",
+      "unlock_day_start": 1,
+      "unlock_delay_hours": 24,
+      "certificate_on_completion": true,
+      "trigger_logic": "Interview Confidence Score of 2 inserts this module directly before Interview Practice.",
+      "lessons": [
+        {"id": "record_lesson_01", "title": "Understanding What Employers Actually Want to Hear", "type": "text", "icon": "book-open", "unlock_day": 1, "content_ref": "Talking_About_Your_Record.md#lesson-1"},
+        {"id": "record_lesson_02", "title": "Building Your Response", "type": "interactive_text", "icon": "file-signature", "unlock_day": 2, "content_ref": "Talking_About_Your_Record.md#lesson-2"},
+        {"id": "record_lesson_03", "title": "Handling Follow-Up Questions", "type": "interactive_practice", "icon": "message-circle", "unlock_day": 3, "content_ref": "Talking_About_Your_Record.md#lesson-3"},
+        {"id": "record_lesson_04", "title": "Knowing Your Rights", "type": "resource_list", "icon": "scale", "unlock_day": 4, "content_ref": "Talking_About_Your_Record.md#lesson-4", "linked_resources": ["conn_fair_chance_hiring"]}
       ]
     }
-  ],
-  "interviewQuestions": [
-    {
-      "id": "iq-1",
-      "question": "Tell me a little about yourself.",
-      "tip": "Keep it to about a minute. Where you are from, what you are good at, and what kind of work you want next.",
-      "sampleAnswers": [
-        "I am someone who shows up early and finishes what I start. I spent the last few years learning kitchen work and I am looking for a steady role where I can keep building on that.",
-        "I like hands-on work. I picked up maintenance and repair skills, and I am looking for a place where I can learn the rest on the job."
-      ]
-    },
-    {
-      "id": "iq-2",
-      "question": "Why should we hire you for this role?",
-      "tip": "Name one or two strengths and tie each to something the job actually needs.",
-      "sampleAnswers": [
-        "I am reliable and I take direction well. This job needs someone who can be counted on for every shift, and that is the part I am proudest of.",
-        "I work well with a crew. I have spent years in situations where getting along with people mattered, so I do not bring drama to a team."
-      ]
-    },
-    {
-      "id": "iq-3",
-      "question": "I see a gap in your work history. Can you tell me about it?",
-      "tip": "Be brief and honest, then turn it forward to what you did with that time. You do not owe anyone the full story.",
-      "sampleAnswers": [
-        "I was incarcerated. I used that time to finish my GED and complete a food handling certificate, and I am ready to get back to work.",
-        "I had a period away. I took classes and worked in the facility kitchen the whole time, and my references can speak to how I showed up."
-      ]
-    },
-    {
-      "id": "iq-4",
-      "question": "Tell me about a time you handled a difficult situation at work.",
-      "tip": "Use three steps: what happened, what you did, how it turned out.",
-      "sampleAnswers": [
-        "A coworker and I disagreed about how to close up. I asked the supervisor to settle it instead of arguing on the floor, and we ended up with a written closing list everyone followed.",
-        "We were short staffed on a busy night. I took the extra station without being asked and we got through service without sending anything back."
-      ]
-    },
-    {
-      "id": "iq-5",
-      "question": "What are you hoping to learn in this job?",
-      "tip": "Show you want to grow. Employers like people who plan to stick around.",
-      "sampleAnswers": [
-        "I would like to learn the ordering and inventory side, so over time I can take on more than my own station.",
-        "I want to get certified on the equipment here. If there is a path to a lead role, that is what I am working toward."
-      ]
-    },
-    {
-      "id": "iq-6",
-      "question": "Where do you see yourself in two years?",
-      "tip": "Keep it realistic and tied to this employer. Steady beats flashy.",
-      "sampleAnswers": [
-        "Still here, trained up, and hopefully helping bring new people along.",
-        "In a role with more responsibility. I am not in a rush, I just want to keep moving forward."
-      ]
-    }
-  ],
-  "entries": [
-    {
-      "id": "tech-01",
-      "type": "lesson",
-      "title": "Turning on a smartphone and finding your way around",
-      "description": "The power button, the home screen, and how to open and close an app without getting lost.",
-      "link": "https://edu.gcfglobal.org/en/computerbasics/mobile-devices/1/",
-      "category": "Technology",
-      "subcategory": "Device Basics",
-      "order": 1,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "tech-02",
-      "type": "lesson",
-      "title": "Setting up a free email address",
-      "description": "A step by step walkthrough of creating an email account and writing your password down somewhere safe.",
-      "link": "https://edu.gcfglobal.org/en/gmail/setting-up-a-gmail-account/1/",
-      "category": "Technology",
-      "subcategory": "Email",
-      "order": 2,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "tech-03",
-      "type": "lesson",
-      "title": "Passwords that you can actually remember",
-      "description": "How to build a strong password, why you should not reuse one, and what to do when you get locked out.",
-      "link": "https://edu.gcfglobal.org/en/internetsafety/creating-strong-passwords/full/",
-      "category": "Technology",
-      "subcategory": "Online Safety",
-      "order": 3,
-      "flagged": true,
-      "flagReason": "Needs staff review"
-    },
-    {
-      "id": "tech-04",
-      "type": "lesson",
-      "title": "Searching the internet for what you need",
-      "description": "Typing a clear search, reading the results, and spotting an ad versus a real answer.",
-      "link": "https://edu.gcfglobal.org/en/internetbasics/using-search-engines/full",
-      "category": "Technology",
-      "subcategory": "Device Basics",
-      "order": 4,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "tech-05",
-      "type": "lesson",
-      "title": "Filling out an application form online",
-      "description": "Text boxes, drop down menus, checkboxes, and the submit button, using a job application as the practice run.",
-      "link": "https://edu.gcfglobal.org/en/jobapplications/completing-a-job-application/full",
-      "category": "Technology",
-      "subcategory": "Forms and Documents",
-      "order": 5,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "tech-06",
-      "type": "resource",
-      "title": "Free computer classes near you",
-      "description": "DigitalLearn runs free beginner courses on computers, email, and getting online. Public libraries use the same lessons in person.",
-      "link": "https://www.digitallearn.org/",
-      "category": "Technology",
-      "subcategory": "Device Basics",
-      "order": 6,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "tech-07",
-      "type": "resource",
-      "title": "Low cost phone and internet through Lifeline",
-      "description": "Lifeline takes money off your monthly phone or internet bill if you qualify. Note the Affordable Connectivity Program ended in 2024, so Lifeline is the federal program still running.",
-      "link": "https://www.fcc.gov/lifeline-consumers",
-      "category": "Technology",
-      "subcategory": "Online Safety",
-      "order": 7,
-      "flagged": true,
-      "flagReason": "Newer version available"
-    },
-    {
-      "id": "tech-08",
-      "type": "resource",
-      "title": "The full free course library",
-      "description": "Hundreds of free, self paced lessons on computers, the internet, money, and work skills. No account needed.",
-      "link": "https://edu.gcfglobal.org/en/",
-      "category": "Technology",
-      "subcategory": "Device Basics",
-      "order": 8,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "emp-01",
-      "type": "lesson",
-      "title": "Writing a resume when your history has gaps",
-      "description": "A one page layout that leads with your skills, plus what to do about time you spent away.",
-      "link": "https://www.careeronestop.org/JobSearch/Resumes/ResumeGuide/special-tips.aspx",
-      "category": "Employment",
-      "subcategory": "Resume",
-      "order": 1,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "emp-02",
-      "type": "lesson",
-      "title": "Talking about your record with confidence",
-      "description": "What you have to share, what you do not, and a short script you can practice out loud.",
-      "link": "https://blog.careeronestop.org/tips-for-discussing-your-criminal-record-at-a-job-interview/",
-      "category": "Employment",
-      "subcategory": "Interviewing",
-      "order": 2,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "emp-03",
-      "type": "lesson",
-      "title": "Applying for a job online",
-      "description": "Creating an account on a job site, uploading your resume, and keeping track of where you applied.",
-      "link": "https://edu.gcfglobal.org/en/jobsearchandnetworking/find-a-job-online/full",
-      "category": "Employment",
-      "subcategory": "Job Search",
-      "order": 3,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "emp-04",
-      "type": "lesson",
-      "title": "Getting ready for your first days at work",
-      "description": "A work ready checklist covering what to sort out before day one and how to handle your first mistake.",
-      "link": "https://www.careeronestop.org/JusticeImpacted/FindAJob/WorkChecklist/work-ready-checklist.aspx",
-      "category": "Employment",
-      "subcategory": "On the Job",
-      "order": 4,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "emp-05",
-      "type": "resource",
-      "title": "American Job Centers near you",
-      "description": "Free in person help with resumes, training programs, and local job leads. Most have computers you can use.",
-      "link": "https://www.careeronestop.org/LocalHelp/AmericanJobCenters/find-american-job-centers.aspx",
-      "category": "Employment",
-      "subcategory": "Job Search",
-      "order": 5,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "emp-06",
-      "type": "resource",
-      "title": "Employers who hire people with records",
-      "description": "Which employers and trades hire justice impacted job seekers, and how to find the openings.",
-      "link": "https://www.careeronestop.org/JusticeImpacted/FindAJob/FindOpenings/who-hires-justice-impacted-job-seekers.aspx",
-      "category": "Employment",
-      "subcategory": "Job Search",
-      "order": 6,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "emp-07",
-      "type": "resource",
-      "title": "Federal Bonding Program",
-      "description": "Free insurance that covers an employer for the first six months of your job, at no cost to you or to them.",
-      "link": "https://www.dol.gov/agencies/eta/federal-bonding-program",
-      "category": "Employment",
-      "subcategory": "On the Job",
-      "order": 7,
-      "flagged": true,
-      "flagReason": "Flagged by a participant"
-    },
-    {
-      "id": "emp-08",
-      "type": "resource",
-      "title": "Common interview questions to practice",
-      "description": "The questions employers ask most, with guidance on answering each one. Pairs with the Interview Practice tool in this app.",
-      "link": "https://www.careeronestop.org/JobSearch/Interview/common-interview-questions.aspx",
-      "category": "Employment",
-      "subcategory": "Interviewing",
-      "order": 8,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "emp-09",
-      "type": "resource",
-      "title": "Reentry video library",
-      "description": "Short videos from CareerOneStop covering job search, interviews, and starting work after incarceration.",
-      "link": "https://www.careeronestop.org/JusticeImpacted/Help/videos.aspx",
-      "category": "Employment",
-      "subcategory": "Job Search",
-      "order": 9,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "emp-10",
-      "type": "resource",
-      "title": "Reentry get started guide",
-      "description": "The full CareerOneStop guide for justice impacted job seekers, start to finish, in one place.",
-      "link": "https://www.careeronestop.org/JusticeImpacted/get-started-guide.aspx",
-      "category": "Employment",
-      "subcategory": "Job Search",
-      "order": 10,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "conn-01",
-      "type": "lesson",
-      "title": "Getting your ID and birth certificate",
-      "description": "What documents you need, where to request them, and roughly how long each one takes.",
-      "link": "https://www.usa.gov/replace-vital-documents",
-      "category": "Connections",
-      "subcategory": "Documents and ID",
-      "order": 1,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "conn-02",
-      "type": "lesson",
-      "title": "Rebuilding trust with family",
-      "description": "Small, steady steps that work better than one big conversation, plus how to handle a hard no.",
-      "link": "https://www.samhsa.gov/mental-health/children-and-families/coping-resources",
-      "category": "Connections",
-      "subcategory": "Family",
-      "order": 2,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "conn-03",
-      "type": "lesson",
-      "title": "Building a support list before you need it",
-      "description": "Naming five people or places you can reach out to, and writing the numbers down on paper.",
-      "link": "https://www.samhsa.gov/find-support",
-      "category": "Connections",
-      "subcategory": "Support Network",
-      "order": 3,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "conn-04",
-      "type": "resource",
-      "title": "211 community help line",
-      "description": "One phone call connects you to housing, food, transport, and health services in your area.",
-      "link": "https://www.211.org/",
-      "category": "Connections",
-      "subcategory": "Support Network",
-      "order": 4,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "conn-05",
-      "type": "resource",
-      "title": "988 Suicide and Crisis Lifeline",
-      "description": "Free, confidential support any hour of any day. Call or text 988 from any phone.",
-      "link": "https://988lifeline.org/",
-      "category": "Connections",
-      "subcategory": "Crisis Support",
-      "order": 5,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "conn-06",
-      "type": "resource",
-      "title": "Applying for health coverage and food benefits",
-      "description": "Where to start with Medicaid and SNAP, and which documents to bring with you.",
-      "link": "https://www.benefits.gov/",
-      "category": "Connections",
-      "subcategory": "Documents and ID",
-      "order": 6,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "conn-07",
-      "type": "resource",
-      "title": "Housing help after release",
-      "description": "HUD's shelter finder covers housing, health care, and clothing. Dial 211 and press 6 if you have nowhere to go on day one.",
-      "link": "https://www.hud.gov/findshelter",
-      "category": "Connections",
-      "subcategory": "Housing",
-      "order": 7,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "conn-08",
-      "type": "resource",
-      "title": "Reentry programs near you",
-      "description": "Local programs built for people coming home, covering job search, housing, and other needs.",
-      "link": "https://www.careeronestop.org/LocalHelp/EmploymentAndTraining/find-reentry-programs.aspx",
-      "category": "Connections",
-      "subcategory": "Support Network",
-      "order": 8,
-      "flagged": false,
-      "flagReason": ""
-    },
-    {
-      "id": "conn-09",
-      "type": "resource",
-      "title": "National Reentry Resource Center",
-      "description": "The national hub for reentry information, including record clearing and what a conviction affects.",
-      "link": "https://nationalreentryresourcecenter.org/",
-      "category": "Connections",
-      "subcategory": "Documents and ID",
-      "order": 9,
-      "flagged": false,
-      "flagReason": ""
-    }
-  ],
-  "linksCheckedOn": "2026-09-21"
+  },
+  "Connections": {
+    "Public_Libraries": [
+      {"id": "conn_lib_lewiston", "city": "Lewiston, ME", "address": "200 Lisbon Street, Lewiston, ME 04240", "phone": "207-513-3004", "link": "https://lplonline.org/", "icon": "map-pin"},
+      {"id": "conn_lib_bangor", "city": "Bangor, ME", "address": "145 Harlow Street, Bangor, ME 04401", "phone": "207-947-8336", "link": "https://bangorpubliclibrary.org/", "icon": "map-pin"},
+      {"id": "conn_lib_augusta", "city": "Augusta, ME", "address": "45 Winthrop Street, Augusta, ME 04330", "phone": "207-626-2415", "link": "https://www.lithgowlibrary.org/", "icon": "map-pin"},
+      {"id": "conn_lib_portland", "city": "Portland, ME", "address": "5 Monument Square, Portland, ME 04101", "phone": "207-871-1700", "link": "https://www.portlandlibrary.com/", "icon": "map-pin"}
+    ],
+    "Reentry_Programs": [
+      {"id": "conn_reentry_programs", "name": "Maine Reentry Resources", "link": "https://www.maine.gov/corrections/programs/reentry", "icon": "heart-handshake"}
+    ],
+    "Faith_Groups": [
+      {"id": "conn_faith_groups", "name": "Faith-Based Support", "link": "https://www.maine.gov/corrections/programs/reentry", "icon": "heart-handshake"}
+    ],
+    "Peer_Mentors": [
+      {"id": "conn_peer_mentors", "name": "Peer Mentor Programs", "link": "https://www.maine.gov/corrections/programs/reentry", "icon": "heart-handshake"}
+    ],
+    "Fair_Chance_Hiring": [
+      {"id": "conn_fair_chance_hiring", "name": "Fair Chance Hiring Information", "link": "https://www.eeoc.gov/arrestandconviction", "icon": "scale"}
+    ]
+  }
 }

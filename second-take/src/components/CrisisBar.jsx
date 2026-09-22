@@ -1,4 +1,4 @@
-// Fixed orange crisis bar that sits on every screen, participant and admin alike.
+// Fixed red crisis bar, pinned to the bottom of every screen with no exceptions.
 export default function CrisisBar() {
   return (
     <div className="crisis-bar" role="complementary" aria-label="Crisis support">

@@ -1,216 +1,309 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import content from './data/content.json'
-import { blankState, clearState, loadState, logEntry, makeId, saveState } from './lib/storage'
+import { blankState, clearState, loadState, readSkipWait, saveState, writeSkipWait } from './lib/storage'
 import { applyTheme, readTheme } from './lib/theme'
+import { buildLearningPath, CERTIFICATE_MODULES, moduleLessonKeys, moduleTitleById } from './lib/path'
+import { stepStatus } from './lib/unlock'
 
+import Icon from './components/Icon'
 import CrisisBar from './components/CrisisBar'
+import AffirmationTicker from './components/AffirmationTicker'
+import Celebration from './components/Celebration'
 import Toast from './components/Toast'
+
+import Welcome from './screens/Welcome'
 import Home from './screens/Home'
 import CheckInQuiz from './screens/CheckInQuiz'
 import LearningPath from './screens/LearningPath'
+import LessonScreen from './screens/LessonScreen'
 import ResourceDirectory from './screens/ResourceDirectory'
 import InterviewPractice from './screens/InterviewPractice'
-import AdminDashboard from './admin/AdminDashboard'
+import ComingSoon from './screens/ComingSoon'
+import CertificateScreen from './screens/CertificateScreen'
 
-const CATEGORY_ORDER = ['Technology', 'Employment', 'Connections']
-
-const PARTICIPANT_NAV = [
+const NAV = [
   { key: 'home', label: 'Home' },
-  { key: 'quiz', label: 'Check-In Quiz' },
-  { key: 'path', label: 'Learning Path' },
-  { key: 'resources', label: 'Resources' },
-  { key: 'interview', label: 'Interview Practice' }
+  { key: 'quiz', label: 'Check-In' },
+  { key: 'path', label: 'My Path' },
+  { key: 'resources', label: 'Resources' }
 ]
+
+function randomAffirmation() {
+  const list = content.Affirmations
+  return list[Math.floor(Math.random() * list.length)]
+}
 
 export default function App() {
   const [state, setState] = useState(loadState)
   const [screen, setScreen] = useState('home')
-  const [toast, setToast] = useState('')
+  const [openStepKey, setOpenStepKey] = useState(null)
+  const [certificateModule, setCertificateModule] = useState(null)
   const [theme, setTheme] = useState(readTheme)
+  const [skipWait, setSkipWait] = useState(readSkipWait)
+  const [toast, setToast] = useState('')
+  const [celebration, setCelebration] = useState(0)
 
-  // Every change is written straight back to localStorage, so the demo
-  // survives a page refresh within the same browser.
+  // One affirmation, picked once per app load, shown on the homepage.
+  const [affirmation] = useState(randomAffirmation)
+
   useEffect(() => { saveState(state) }, [state])
-
-  useEffect(() => { window.scrollTo(0, 0) }, [screen])
-
   useEffect(() => { applyTheme(theme) }, [theme])
+  useEffect(() => { window.scrollTo(0, 0) }, [screen, openStepKey])
 
-  const showToast = useCallback((message) => setToast(message), [])
+  const steps = useMemo(() => buildLearningPath(state.scores), [state.scores])
 
-  // Lessons for the path: the quiz's recommended category floats to the top.
-  const lessons = useMemo(() => {
-    const preferred = state.startingPoint?.category
-    const order = preferred
-      ? [preferred, ...CATEGORY_ORDER.filter((name) => name !== preferred)]
-      : CATEGORY_ORDER
+  // Recomputed on a timer so a lesson's 24-hour wait turns into "current"
+  // without needing a refresh.
+  const [clock, setClock] = useState(() => Date.now())
+  useEffect(() => {
+    const tick = setInterval(() => setClock(Date.now()), 30000)
+    return () => clearInterval(tick)
+  }, [])
 
-    return state.entries
-      .filter((entry) => entry.type === 'lesson')
-      .slice()
-      .sort((a, b) => {
-        const byCategory = order.indexOf(a.category) - order.indexOf(b.category)
-        if (byCategory !== 0) return byCategory
-        return (a.order || 0) - (b.order || 0)
-      })
-  }, [state.entries, state.startingPoint])
-
-  const directoryEntries = useMemo(
-    () =>
-      state.entries
-        .slice()
-        .sort((a, b) => {
-          const byCategory = CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category)
-          if (byCategory !== 0) return byCategory
-          return (a.order || 0) - (b.order || 0)
-        }),
-    [state.entries]
+  const statuses = useMemo(
+    () => stepStatus(steps, state.completed, skipWait, clock),
+    [steps, state.completed, skipWait, clock]
   )
 
-  function saveQuiz(answers, startingPoint) {
-    setState((previous) => ({ ...previous, quizAnswers: answers, startingPoint }))
+  const openStep = statuses.find((s) => s.key === openStepKey) || null
+  const showToast = useCallback((message) => setToast(message), [])
+
+  function saveName(name) {
+    setState((previous) => ({ ...previous, name }))
   }
 
-  function toggleLesson(id) {
-    setState((previous) => {
-      const done = previous.completedLessons.includes(id)
-      return {
-        ...previous,
-        completedLessons: done
-          ? previous.completedLessons.filter((item) => item !== id)
-          : [...previous.completedLessons, id]
-      }
-    })
+  function saveQuiz(answers, scores) {
+    setState((previous) => ({ ...previous, quizAnswers: answers, scores }))
   }
 
-  function saveInterview(id, text) {
+  function saveLessonInput(stepKey, fieldId, value) {
     setState((previous) => ({
       ...previous,
-      interviewResponses: { ...previous.interviewResponses, [id]: text }
+      lessonInputs: {
+        ...previous.lessonInputs,
+        [stepKey]: { ...(previous.lessonInputs[stepKey] || {}), [fieldId]: value }
+      }
     }))
   }
 
-  const actions = {
-    updateEntry(id, draft) {
-      setState((previous) => {
-        const existing = previous.entries.find((entry) => entry.id === id)
-        const linkChanged = existing && existing.link !== draft.link
-        return {
-          ...previous,
-          entries: previous.entries.map((entry) =>
-            entry.id === id
-              ? {
-                  ...entry,
-                  ...draft,
-                  // Swapping in a new link clears the flag on it.
-                  flagged: linkChanged ? false : entry.flagged,
-                  flagReason: linkChanged ? '' : entry.flagReason
-                }
-              : entry
-          ),
-          activityLog: [
-            logEntry(`Edited "${draft.title}"${linkChanged ? ' and replaced its link' : ''}`),
-            ...previous.activityLog
-          ]
-        }
-      })
-    },
-
-    addEntry(draft) {
-      setState((previous) => {
-        const sameCategory = previous.entries.filter((entry) => entry.category === draft.category)
-        const nextOrder = sameCategory.reduce((max, entry) => Math.max(max, entry.order || 0), 0) + 1
-        const entry = {
-          id: makeId('entry'),
-          flagged: false,
-          flagReason: '',
-          order: nextOrder,
-          ...draft
-        }
-        return {
-          ...previous,
-          entries: [...previous.entries, entry],
-          activityLog: [logEntry(`Added "${entry.title}" to ${entry.category}`), ...previous.activityLog]
-        }
-      })
-    },
-
-    removeEntry(id) {
-      setState((previous) => {
-        const removed = previous.entries.find((entry) => entry.id === id)
-        return {
-          ...previous,
-          entries: previous.entries.filter((entry) => entry.id !== id),
-          completedLessons: previous.completedLessons.filter((item) => item !== id),
-          activityLog: [
-            logEntry(`Removed "${removed ? removed.title : 'an entry'}" from ${removed ? removed.category : 'the app'}`),
-            ...previous.activityLog
-          ]
-        }
-      })
-    }
+  function saveInterview(questionId, value) {
+    setState((previous) => ({
+      ...previous,
+      interviewResponses: { ...previous.interviewResponses, [questionId]: value }
+    }))
   }
 
-  function resetDemo() {
+  function toggleCheck(index) {
+    setState((previous) => ({
+      ...previous,
+      checklist: { ...previous.checklist, [index]: !previous.checklist[index] }
+    }))
+  }
+
+  function completeStep(step) {
+    const finishedAt = new Date().toISOString()
+
+    setState((previous) => {
+      const completed = { ...previous.completed, [step.key]: finishedAt }
+      let certificates = previous.certificates
+
+      // A certificate is earned the moment every lesson in the module is done.
+      if (step.moduleId && CERTIFICATE_MODULES.includes(step.moduleId)) {
+        const keys = moduleLessonKeys(step.moduleId)
+        const allDone = keys.length > 0 && keys.every((key) => completed[key])
+        if (allDone && !certificates[step.moduleId]) {
+          certificates = { ...certificates, [step.moduleId]: finishedAt }
+        }
+      }
+
+      return { ...previous, completed, certificates }
+    })
+
+    setCelebration(Date.now())
+    setOpenStepKey(null)
+
+    // Check module completion again outside setState so we know where to go next.
+    if (step.moduleId && CERTIFICATE_MODULES.includes(step.moduleId)) {
+      const keys = moduleLessonKeys(step.moduleId)
+      const allDone = keys.length > 0 && keys.every((key) => key === step.key || state.completed[key])
+      if (allDone && !state.certificates[step.moduleId]) {
+        setCertificateModule(step.moduleId)
+        setScreen('certificate')
+        return
+      }
+    }
+
+    setScreen('path')
+    showToast('Lesson complete. Nice work.')
+  }
+
+  function startOver() {
     clearState()
     setState(blankState())
+    setOpenStepKey(null)
     setScreen('home')
-    showToast('Demo reset. Everything is back to its starting content.')
+    showToast('Started over. Your progress is cleared.')
   }
 
-  const isAdmin = screen === 'admin'
+  function toggleSkipWait(value) {
+    setSkipWait(value)
+    writeSkipWait(value)
+  }
+
+  const earnedCertificates = CERTIFICATE_MODULES
+    .filter((id) => state.certificates[id])
+    .map((id) => ({ id, title: moduleTitleById(id), issuedOn: state.certificates[id] }))
+
+  // Name is asked once, before anything else.
+  if (!state.name) {
+    return (
+      <div className="app">
+        <header className="topbar">
+          <div className="topbar__brand">
+            <h1>Second Take</h1>
+            <span className="topbar__tag">Getting ready, one step at a time</span>
+          </div>
+        </header>
+        <Welcome onSubmit={saveName} />
+        <AffirmationTicker />
+        <CrisisBar />
+      </div>
+    )
+  }
 
   return (
     <div className="app">
       <header className="topbar">
         <div className="topbar__brand">
-          <h1>{content.appName}</h1>
-          <span className="topbar__tag">{isAdmin ? 'Staff admin — demo mode' : 'Reentry coaching, one step at a time'}</span>
+          <h1>Second Take</h1>
+          <span className="topbar__tag">Getting ready, one step at a time</span>
         </div>
 
         <nav className="topnav" aria-label="Main">
-          {!isAdmin &&
-            PARTICIPANT_NAV.map((item) => (
-              <button
-                key={item.key}
-                type="button"
-                className={`btn btn--ghost-light btn--small${screen === item.key ? ' is-active' : ''}`}
-                onClick={() => setScreen(item.key)}
-              >
-                {item.label}
-              </button>
-            ))}
+          {NAV.map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              className={`btn btn--ghost-light btn--small${screen === item.key ? ' is-active' : ''}`}
+              onClick={() => { setOpenStepKey(null); setScreen(item.key) }}
+            >
+              {item.label}
+            </button>
+          ))}
           <button
             type="button"
-            className={`btn btn--small ${isAdmin ? 'btn--gold' : 'btn--ghost-light'}`}
-            onClick={() => setScreen(isAdmin ? 'home' : 'admin')}
-          >
-            {isAdmin ? 'Exit admin' : 'Admin'}
-          </button>
-          <button
-            type="button"
-            className="btn btn--ghost-light btn--small theme-toggle"
-            aria-pressed={theme === 'light'}
+            className="btn btn--ghost-light btn--small"
+            aria-pressed={theme === 'dark'}
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           >
-            {theme === 'dark' ? '☀ Light mode' : '☾ Dark mode'}
+            <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
+            {theme === 'dark' ? 'Light' : 'Dark'}
           </button>
-          <button type="button" className="btn btn--ghost-light btn--small" onClick={resetDemo}>
-            Reset demo
+          <button type="button" className="btn btn--ghost-light btn--small" onClick={startOver}>
+            Start over
           </button>
         </nav>
       </header>
 
-      {screen === 'home' && <Home state={state} lessons={lessons} go={setScreen} />}
-      {screen === 'quiz' && <CheckInQuiz state={state} lessons={lessons} saveQuiz={saveQuiz} go={setScreen} />}
-      {screen === 'path' && <LearningPath state={state} lessons={lessons} toggleLesson={toggleLesson} go={setScreen} />}
-      {screen === 'resources' && <ResourceDirectory entries={directoryEntries} go={setScreen} />}
-      {screen === 'interview' && <InterviewPractice state={state} saveInterview={saveInterview} go={setScreen} />}
-      {screen === 'admin' && (
-        <AdminDashboard state={state} actions={actions} showToast={showToast} go={setScreen} />
+      {openStep && openStep.kind === 'lesson' && (
+        <LessonScreen
+          step={openStep}
+          state={state}
+          isDone={!!state.completed[openStep.key]}
+          onSaveInput={saveLessonInput}
+          onToggleCheck={toggleCheck}
+          onComplete={completeStep}
+          back={() => { setOpenStepKey(null); setScreen('path') }}
+        />
       )}
 
+      {openStep && openStep.kind === 'checklist' && (
+        <LessonScreen
+          step={openStep}
+          state={state}
+          isDone={!!state.completed[openStep.key]}
+          onSaveInput={saveLessonInput}
+          onToggleCheck={toggleCheck}
+          onComplete={completeStep}
+          back={() => { setOpenStepKey(null); setScreen('path') }}
+        />
+      )}
+
+      {openStep && openStep.kind === 'interview' && (
+        <InterviewPractice
+          responses={state.interviewResponses}
+          onSave={saveInterview}
+          isDone={!!state.completed[openStep.key]}
+          onComplete={() => completeStep(openStep)}
+          back={() => { setOpenStepKey(null); setScreen('path') }}
+        />
+      )}
+
+      {!openStep && screen === 'home' && (
+        <>
+          <Home
+            name={state.name}
+            affirmation={affirmation}
+            steps={steps}
+            completed={state.completed}
+            scores={state.scores}
+            go={setScreen}
+          />
+          {earnedCertificates.length > 0 && (
+            <div className="screen" style={{ paddingTop: 0 }}>
+              <section className="card card--gold block">
+                <h2><Icon name="award" size={24} /> Your certificates</h2>
+                {earnedCertificates.map((cert) => (
+                  <button
+                    key={cert.id}
+                    type="button"
+                    className="btn btn--gold"
+                    onClick={() => { setCertificateModule(cert.id); setScreen('certificate') }}
+                  >
+                    {cert.title}
+                  </button>
+                ))}
+              </section>
+            </div>
+          )}
+        </>
+      )}
+
+      {!openStep && screen === 'quiz' && (
+        <CheckInQuiz
+          saved={state.quizAnswers}
+          savedScores={state.scores}
+          onFinish={saveQuiz}
+          go={setScreen}
+        />
+      )}
+
+      {!openStep && screen === 'path' && (
+        <LearningPath
+          statuses={statuses}
+          scores={state.scores}
+          skipWait={skipWait}
+          onToggleSkipWait={toggleSkipWait}
+          openStep={(step) => setOpenStepKey(step.key)}
+          go={setScreen}
+        />
+      )}
+
+      {!openStep && screen === 'resources' && <ResourceDirectory go={setScreen} />}
+      {!openStep && screen === 'employment' && <ComingSoon go={setScreen} />}
+
+      {!openStep && screen === 'certificate' && certificateModule && (
+        <CertificateScreen
+          name={state.name}
+          moduleTitle={moduleTitleById(certificateModule)}
+          issuedOn={state.certificates[certificateModule]}
+          back={() => setScreen('path')}
+        />
+      )}
+
+      <Celebration token={celebration} />
       <Toast message={toast} onDone={() => setToast('')} />
+      <AffirmationTicker />
       <CrisisBar />
     </div>
   )

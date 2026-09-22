@@ -1,91 +1,91 @@
 import { useState } from 'react'
-import content from '../data/content.json'
+import Icon from '../components/Icon'
+import { QUIZ_QUESTIONS, scoreQuiz } from '../lib/quiz'
 
-// Counts which category the answers lean toward and returns a starting point.
-function buildStartingPoint(answers, lessons) {
-  const tally = { Technology: 0, Employment: 0, Connections: 0 }
-
-  content.quizQuestions.forEach((question) => {
-    const chosen = question.options.find((option) => option.value === answers[question.id])
-    if (chosen) tally[chosen.category] += 1
-  })
-
-  const category = Object.keys(tally).reduce((best, key) => (tally[key] > tally[best] ? key : best), 'Technology')
-  const firstLesson = lessons.find((lesson) => lesson.category === category) || lessons[0] || null
-
-  const reasons = {
-    Technology: 'Your answers say the device and internet basics are the place to start. Everything else gets easier once those click.',
-    Employment: 'Your answers say you are ready to put work first, so we start with resumes and interviews.',
-    Connections: 'Your answers point to paperwork and people first. Steady ground makes the rest of it stick.'
-  }
-
-  return { category, reason: reasons[category], firstLessonId: firstLesson ? firstLesson.id : null, tally }
-}
-
-export default function CheckInQuiz({ state, lessons, saveQuiz, go }) {
+export default function CheckInQuiz({ saved, savedScores, onFinish, go }) {
   const [step, setStep] = useState(0)
-  const [answers, setAnswers] = useState(state.quizAnswers || {})
-  const [result, setResult] = useState(state.startingPoint || null)
+  const [answers, setAnswers] = useState(saved || {})
+  const [result, setResult] = useState(savedScores || null)
   const [showResult, setShowResult] = useState(false)
 
-  const questions = content.quizQuestions
-  const question = questions[step]
-  const isLast = step === questions.length - 1
-  const currentAnswer = answers[question?.id]
-
-  function choose(value) {
-    setAnswers((previous) => ({ ...previous, [question.id]: value }))
-  }
+  const question = QUIZ_QUESTIONS[step]
+  const isLast = step === QUIZ_QUESTIONS.length - 1
+  const answer = answers[question.id]
+  // Question 7 is open text, so it is allowed to be left blank.
+  const canAdvance = question.type === 'text' ? true : Boolean(answer)
 
   function next() {
-    if (!isLast) {
-      setStep(step + 1)
-      return
-    }
-    const startingPoint = buildStartingPoint(answers, lessons)
-    setResult(startingPoint)
+    if (!isLast) { setStep(step + 1); return }
+    const scores = scoreQuiz(answers)
+    setResult(scores)
     setShowResult(true)
-    saveQuiz(answers, startingPoint)
-  }
-
-  function restart() {
-    setAnswers({})
-    setResult(null)
-    setShowResult(false)
-    setStep(0)
+    onFinish(answers, scores)
   }
 
   if (showResult && result) {
-    const firstLesson = lessons.find((lesson) => lesson.id === result.firstLessonId)
     return (
-      <div className="screen stack">
+      <div className="screen">
         <header className="screen__header">
-          <h1>Here is your starting point</h1>
-          <p>Nothing here is locked in. You can take the quiz again any time.</p>
+          <h1>Here's your path</h1>
+          <p>Nothing is locked in. You can retake the check-in any time and your path will change with it.</p>
         </header>
 
-        <section className="card stack">
-          <span className="tag tag--gold">{result.category}</span>
-          <h2>Start with {result.category.toLowerCase()} skills</h2>
-          <p>{result.reason}</p>
-          {firstLesson && (
-            <div className="card">
-              <p className="card__label">Your first lesson</p>
-              <h3>{firstLesson.title}</h3>
-              <p style={{ color: 'var(--muted)' }}>{firstLesson.description}</p>
+        <section className="card block">
+          <h2>What your answers told us</h2>
+          <div className="block">
+            <div className="card card--teal">
+              <h3>Technology: {result.technologyLabel}</h3>
+              <p>
+                {result.slowerPacing
+                  ? 'We start you in Digital Basics and take it slower, one small step at a time.'
+                  : 'You already have a footing here, so we move at a standard pace.'}
+              </p>
             </div>
-          )}
+            <div className="card card--teal">
+              <h3>Support network</h3>
+              <p>
+                {result.supportPlacement === 'first'
+                  ? 'Building Your Support Network opens your path. Everything else is easier with people in your corner.'
+                  : result.supportPlacement === 'early'
+                    ? 'Building Your Support Network comes in early, right after your first lesson.'
+                    : 'You have support in place, so we keep the standard order.'}
+              </p>
+            </div>
+            <div className="card card--teal">
+              <h3>Talking about your record</h3>
+              <p>
+                {result.insertRecordModule
+                  ? 'The Talking About Your Record module sits right before Interview Practice, so you go in prepared.'
+                  : 'Interview Practice stays in its normal spot in your path.'}
+              </p>
+            </div>
+          </div>
         </section>
 
+        {result.staffFlags.length > 0 && (
+          <section className="card card--gold block">
+            <h3><Icon name="users" size={20} /> Notes for your coach</h3>
+            <p style={{ color: 'var(--muted)' }}>
+              These show where a staff member might check in with you. They are only on this device.
+            </p>
+            <ul className="block" style={{ gap: 8 }}>
+              {result.staffFlags.map((flag) => (
+                <li key={flag} style={{ fontWeight: 700 }}>· {flag}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         <div className="row">
-          <button type="button" className="btn btn--gold" onClick={() => go('path')}>
+          <button type="button" className="btn" onClick={() => go('path')}>
             Go to my learning path
           </button>
-          <button type="button" className="btn btn--ghost" onClick={restart}>
-            Take the quiz again
-          </button>
-          <button type="button" className="btn btn--quiet" onClick={() => go('home')}>
-            Back to home
+          <button
+            type="button"
+            className="btn btn--quiet"
+            onClick={() => { setAnswers({}); setResult(null); setShowResult(false); setStep(0) }}
+          >
+            Take it again
           </button>
         </div>
       </div>
@@ -93,36 +93,49 @@ export default function CheckInQuiz({ state, lessons, saveQuiz, go }) {
   }
 
   return (
-    <div className="screen stack">
+    <div className="screen">
       <header className="screen__header">
         <h1>Check-In Quiz</h1>
-        <p>Question {step + 1} of {questions.length}. Pick the answer that is closest to true for you.</p>
+        <p>Question {step + 1} of {QUIZ_QUESTIONS.length}. Pick whatever is closest to true for you.</p>
       </header>
 
       <div className="progress-track" aria-hidden="true">
-        <div className="progress-fill" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
+        <div className="progress-fill" style={{ width: `${((step + 1) / QUIZ_QUESTIONS.length) * 100}%` }} />
       </div>
 
-      <section className="card stack">
+      <section className="card block">
         <h2>{question.prompt}</h2>
-        <p style={{ color: 'var(--muted)' }}>{question.helper}</p>
-        <div className="stack" role="group" aria-label={question.prompt}>
-          {question.options.map((option) => {
-            const selected = currentAnswer === option.value
-            return (
-              <button
-                key={option.value}
-                type="button"
-                className={`choice${selected ? ' is-selected' : ''}`}
-                aria-pressed={selected}
-                onClick={() => choose(option.value)}
-              >
-                <span className="choice__mark" aria-hidden="true">{selected ? '✓' : ''}</span>
-                <span>{option.label}</span>
-              </button>
-            )
-          })}
-        </div>
+
+        {question.type === 'text' ? (
+          <div className="field">
+            <label htmlFor="quiz-text">Your answer</label>
+            <textarea
+              id="quiz-text"
+              value={answer || ''}
+              placeholder={question.placeholder}
+              onChange={(event) => setAnswers({ ...answers, [question.id]: event.target.value })}
+            />
+            <p className="field__hint">You can skip this one if you would rather not answer.</p>
+          </div>
+        ) : (
+          <div className="block" role="group" aria-label={question.prompt}>
+            {question.options.map((option) => {
+              const selected = answer === option.value
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={`choice${selected ? ' is-selected' : ''}`}
+                  aria-pressed={selected}
+                  onClick={() => setAnswers({ ...answers, [question.id]: option.value })}
+                >
+                  <span className="choice__mark">{selected ? <Icon name="check" size={15} strokeWidth={3.4} /> : null}</span>
+                  <span>{option.label}</span>
+                </button>
+              )
+            })}
+          </div>
+        )}
       </section>
 
       <div className="row">
@@ -131,11 +144,11 @@ export default function CheckInQuiz({ state, lessons, saveQuiz, go }) {
           className="btn btn--quiet"
           onClick={() => (step === 0 ? go('home') : setStep(step - 1))}
         >
-          {step === 0 ? 'Back to home' : 'Previous question'}
+          {step === 0 ? 'Back to home' : 'Previous'}
         </button>
         <div className="spacer" />
-        <button type="button" className="btn btn--gold" onClick={next} disabled={!currentAnswer}>
-          {isLast ? 'See my starting point' : 'Next question'}
+        <button type="button" className="btn" onClick={next} disabled={!canAdvance}>
+          {isLast ? 'See my path' : 'Next question'}
         </button>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
+import Icon from './Icon'
 
-// Checkmark toast that fades out on its own after a few seconds.
 export default function Toast({ message, onDone }) {
   const [leaving, setLeaving] = useState(false)
 
@@ -18,7 +18,7 @@ export default function Toast({ message, onDone }) {
 
   return (
     <div className={`toast${leaving ? ' is-leaving' : ''}`} role="status">
-      <span className="toast__check" aria-hidden="true">✓</span>
+      <span className="toast__check"><Icon name="check" size={18} strokeWidth={3} /></span>
       <span>{message}</span>
     </div>
   )

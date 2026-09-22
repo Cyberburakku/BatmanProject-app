@@ -1,94 +1,100 @@
 import { useMemo, useState } from 'react'
-import ImagePlaceholder from '../components/ImagePlaceholder'
+import content from '../data/content.json'
+import Icon from '../components/Icon'
 
-const SECTIONS = ['Technology', 'Employment', 'Connections']
+// Connections only for this MVP. Group keys become the filter pills.
+const GROUPS = [
+  { key: 'Public_Libraries', label: 'Libraries' },
+  { key: 'Reentry_Programs', label: 'Reentry Programs' },
+  { key: 'Faith_Groups', label: 'Faith Groups' },
+  { key: 'Peer_Mentors', label: 'Peer Mentors' },
+  { key: 'Fair_Chance_Hiring', label: 'Fair Chance Hiring' }
+]
 
-export default function ResourceDirectory({ entries, go }) {
+const FLAT = GROUPS.flatMap((group) =>
+  (content.Connections[group.key] || []).map((entry) => ({ ...entry, group: group.key, groupLabel: group.label }))
+)
+
+export default function ResourceDirectory({ go }) {
   const [search, setSearch] = useState('')
-  const [category, setCategory] = useState('All')
+  const [group, setGroup] = useState('all')
 
   const visible = useMemo(() => {
     const term = search.trim().toLowerCase()
-    return entries.filter((entry) => {
-      const matchesCategory = category === 'All' || entry.category === category
-      if (!matchesCategory) return false
+    return FLAT.filter((entry) => {
+      if (group !== 'all' && entry.group !== group) return false
       if (!term) return true
-      return [entry.title, entry.description, entry.subcategory, entry.category]
-        .join(' ')
-        .toLowerCase()
-        .includes(term)
+      return [entry.name, entry.city, entry.address, entry.groupLabel]
+        .filter(Boolean).join(' ').toLowerCase().includes(term)
     })
-  }, [entries, search, category])
-
-  const sectionsToShow = category === 'All' ? SECTIONS : [category]
+  }, [search, group])
 
   return (
-    <div className="screen stack">
+    <div className="screen">
       <header className="screen__header">
         <h1>Resource Directory</h1>
-        <p>Everything in one place, split into technology, employment, and connections. Search by word or narrow it down by section.</p>
+        <p>Places and people who can help, here in Maine. Search by name or town, or filter by type.</p>
       </header>
 
-      <section className="card stack" aria-label="Search and filter">
-        <div className="row" style={{ gap: 16 }}>
-          <div style={{ flex: '2 1 280px' }}>
-            <label htmlFor="resource-search">Search resources</label>
-            <input
-              id="resource-search"
-              type="search"
-              placeholder="Try: resume, email, housing"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-            />
-          </div>
-          <div style={{ flex: '1 1 200px' }}>
-            <label htmlFor="resource-category">Section</label>
-            <select
-              id="resource-category"
-              value={category}
-              onChange={(event) => setCategory(event.target.value)}
-            >
-              <option value="All">All sections</option>
-              {SECTIONS.map((name) => (
-                <option key={name} value={name}>{name}</option>
-              ))}
-            </select>
-          </div>
+      <section className="card block" aria-label="Search and filter">
+        <div className="field">
+          <label htmlFor="resource-search">Search</label>
+          <input
+            id="resource-search"
+            type="search"
+            placeholder="Try: Portland, mentor, library"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
         </div>
+
+        <div className="pills" role="group" aria-label="Filter by type">
+          <button type="button" className={`pill${group === 'all' ? ' is-active' : ''}`} onClick={() => setGroup('all')}>
+            All
+          </button>
+          {GROUPS.map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              className={`pill${group === item.key ? ' is-active' : ''}`}
+              onClick={() => setGroup(item.key)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
         <p style={{ color: 'var(--muted)', fontSize: 16 }}>
-          Showing <strong>{visible.length}</strong> of {entries.length} resources.
+          Showing <strong>{visible.length}</strong> of {FLAT.length} resources.
         </p>
       </section>
 
-      {visible.length === 0 && (
-        <div className="card">
-          <h3>Nothing matched that search</h3>
-          <p style={{ color: 'var(--muted)' }}>Try a shorter word, or set the section back to all sections.</p>
+      {visible.length === 0 ? (
+        <div className="card block">
+          <h3>Nothing matched that</h3>
+          <p style={{ color: 'var(--muted)' }}>Try a shorter word, or set the filter back to All.</p>
+        </div>
+      ) : (
+        <div className="grid">
+          {visible.map((entry) => (
+            <article className="resource-card" key={entry.id}>
+              <span className="resource-card__icon"><Icon name={entry.icon} size={26} /></span>
+              <span className="tag">{entry.groupLabel}</span>
+              <h3>{entry.name || entry.city}</h3>
+              {entry.city && entry.name && <p className="resource-card__meta">{entry.city}</p>}
+              {entry.address && <p className="resource-card__meta">{entry.address}</p>}
+              {entry.phone && (
+                <p className="resource-card__meta">
+                  <a href={`tel:${entry.phone.replace(/[^0-9]/g, '')}`}>{entry.phone}</a>
+                </p>
+              )}
+              <a className="btn btn--teal btn--small" href={entry.link} target="_blank" rel="noreferrer">
+                Open Resource
+              </a>
+            </article>
+          ))}
         </div>
       )}
-
-      {sectionsToShow.map((section) => {
-        const items = visible.filter((entry) => entry.category === section)
-        if (items.length === 0) return null
-        return (
-          <section key={section} className="stack" aria-label={section}>
-            <h2>{section}</h2>
-            <div className="grid">
-              {items.map((entry) => (
-                <article key={entry.id} className="card stack">
-                  <ImagePlaceholder height={110} />
-                  <span className="tag">{entry.subcategory}</span>
-                  <h3>{entry.title}</h3>
-                  <p style={{ color: 'var(--muted)', fontSize: 16 }}>{entry.description}</p>
-                  <a className="btn btn--ghost btn--small" href={entry.link} target="_blank" rel="noreferrer">
-                    Open resource
-                  </a>
-                </article>
-              ))}
-            </div>
-          </section>
-        )
-      })}
 
       <div className="row">
         <button type="button" className="btn btn--quiet" onClick={() => go('home')}>Back to home</button>

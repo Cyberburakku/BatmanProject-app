@@ -1,18 +1,19 @@
-import content from '../data/content.json'
-
-// Everything the demo remembers lives under this one key in localStorage
+// Everything the app remembers lives under this one key in localStorage
 // (the browser's own small storage box). No server, no account, no cost.
-const STORAGE_KEY = 'second-take-demo-v1'
+const STORAGE_KEY = 'second-take-mvp-v1'
+const UNLOCK_HOURS_KEY = 'second-take-skip-wait'
 
 export function blankState() {
   return {
-    version: content.version,
-    entries: content.entries.map((entry) => ({ ...entry })),
+    version: 1,
+    name: '',
     quizAnswers: {},
-    startingPoint: null,
-    completedLessons: [],
+    scores: null,
+    completed: {},      // lesson key -> ISO timestamp of completion
+    lessonInputs: {},   // lesson key -> { fieldId: text }
     interviewResponses: {},
-    activityLog: []
+    checklist: {},      // checklist item index -> true
+    certificates: {}    // module id -> ISO date issued
   }
 }
 
@@ -21,10 +22,9 @@ export function loadState() {
     const saved = window.localStorage.getItem(STORAGE_KEY)
     if (!saved) return blankState()
     const parsed = JSON.parse(saved)
-    if (parsed.version !== content.version) return blankState()
+    if (parsed.version !== 1) return blankState()
     return { ...blankState(), ...parsed }
   } catch (err) {
-    // A blocked or full localStorage should never break the demo.
     console.warn('Could not read saved data, starting fresh.', err)
     return blankState()
   }
@@ -46,14 +46,20 @@ export function clearState() {
   }
 }
 
-export function makeId(prefix = 'new') {
-  return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`
+// Demo switch for the 24-hour lesson wait. Kept under its own key so
+// "Start over" does not silently turn it back on.
+export function readSkipWait() {
+  try {
+    return window.localStorage.getItem(UNLOCK_HOURS_KEY) === 'true'
+  } catch {
+    return false
+  }
 }
 
-export function logEntry(message) {
-  return {
-    id: makeId('log'),
-    message,
-    time: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+export function writeSkipWait(value) {
+  try {
+    window.localStorage.setItem(UNLOCK_HOURS_KEY, value ? 'true' : 'false')
+  } catch (err) {
+    console.warn('Could not save the demo setting.', err)
   }
 }

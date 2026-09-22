@@ -1,5 +1,6 @@
-// Theme handling. Dark is the default look; the toggle in the top bar
-// switches to light and remembers the choice on this device.
+// Theme handling. Light is the default, since the design system is built on a
+// warm cream background. The toggle in the top bar switches to dark and
+// remembers the choice on this device.
 const THEME_KEY = 'second-take-theme'
 
 export function readTheme() {
@@ -11,10 +12,10 @@ export function readTheme() {
   }
 
   // No choice saved yet. If the page this app is embedded in already
-  // declares a theme, follow that. Otherwise start dark.
+  // declares a theme, follow that. Otherwise start light.
   const hostTheme = document.documentElement.getAttribute('data-theme')
   if (hostTheme === 'light' || hostTheme === 'dark') return hostTheme
-  return 'dark'
+  return 'light'
 }
 
 export function applyTheme(theme) {
